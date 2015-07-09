@@ -1,1 +1,35 @@
-// No tools yet, coming soon..
+{
+  "name": "resizilla",
+  "version": "0.2.0",
+  "description": "Window resize with debounce. e.g., window.resizilla(handler, delay, inception)",
+  "main": "resizilla.js",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/julienetie/resizilla"
+  },
+  "keywords": [
+    "resize",
+    "window.onresize",
+    "debounce",
+    "window",
+    "event"
+  ],
+  "author": "Julien Etienne",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/julienetie/resizilla/issues"
+  },
+  "homepage": "https://github.com/julienetie/resizilla",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.2.0"
+  }
+}
