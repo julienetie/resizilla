@@ -17,22 +17,22 @@ Copyright (c) 2015 Julien Etienne. MIT License */
 (function(root) {
 
     var previousTime = 0,
-        vendors = ['moz', 'webkit', 'o'],
+        prefixes = ['moz', 'webkit', 'o'],
         i;
+    var rAFname = ['RequestAnimationFrame', 'CancelAnimationFrame', 'CancelRequestAnimationFrame'];
 
     function dateNow() {
         return Date.now() || new Date().getTime();
     }
 
-    (function() {
-        for (i = 0; i < vendors.length && !root.requestAnimationFrame; ++i) {
-            root.requestAnimationFrame = root[vendors[i] +
-                'RequestAnimationFrame'];
-            root.cancelAnimationFrame = root[vendors[i] +
-                'CancelAnimationFrame'] || root[vendors[i] +
-                'CancelRequestAnimationFrame'];
-        }
 
+    function setRequestAnimationFramePrefix(iter) {
+        root.requestAnimationFrame = root[prefixes[iter] + rAFName[0]];
+        root.cancelAnimationFrame = root[prefixes[iter] + rAFName[1]] || root[prefixes[iter] + rAFName[2]];
+    }
+
+
+    function setRequestAnimationFramePolyfill() {
         if (!root.requestAnimationFrame) {
             root.requestAnimationFrame = function(callback, element) {
                 var currTime = dateNow(),
@@ -44,23 +44,34 @@ Copyright (c) 2015 Julien Etienne. MIT License */
                 return id;
             };
         }
+    }
 
+
+    function setCancelAnimationFramePolyfill() {
         if (!root.cancelAnimationFrame) {
             root.cancelAnimationFrame = function(id) {
                 root.clearTimeout(id);
             };
         }
-    }());
+    }
+
+
+    for (i = 0; i < prefixes.length && !root.requestAnimationFrame; ++i) {
+        setRequestAnimationFramePrefix(i);
+    }
+    setRequestAnimationFramePolyfill();
+    setCancelAnimationFramePolyfill();
+
 
     var requestTimeout = function(fn, delay) {
+        var start = dateNow();
+
         function increment(d) {
             !this.k ? this.k = d : null;
             return this.k += 1;
         }
 
-        var start = dateNow();
-
-        function loop(timeStamp) {
+        function loop() {
             this.delta = dateNow() - start;
             this.delta >= delay ? fn.call() : requestAnimationFrame(loop);
         }
@@ -68,6 +79,7 @@ Copyright (c) 2015 Julien Etienne. MIT License */
         requestAnimationFrame(loop);
         return increment(0);
     };
+
 
     root.resizilla = function(handler, delay, inception) {
         function debounce() {
@@ -79,10 +91,10 @@ Copyright (c) 2015 Julien Etienne. MIT License */
                     timeout = 0;
                     if (!inception) handler.apply(context, args);
                 };
-                var instant = inception && !timeout;
+                this.instant = inception && !timeout;
                 cancelAnimationFrame(timeout);
                 timeout = requestTimeout(lastCall, delay);
-                if (instant) handler.apply(context, args);
+                if (this.instant) handler.apply(context, args);
             };
         }
 
