@@ -16,10 +16,11 @@ Copyright (c) 2015 Julien Etienne. MIT License */
 
 (function(root) {
 
-    var previousTime = 0,
+    var animationFrame = {},
+        previousTime = 0,
         prefixes = ['moz', 'webkit', 'o'],
         i;
-    var rAFname = ['RequestAnimationFrame', 'CancelAnimationFrame', 'CancelRequestAnimationFrame'];
+    var vendor = ['RequestAnimationFrame', 'CancelAnimationFrame', 'CancelRequestAnimationFrame'];
 
     function dateNow() {
         return Date.now() || new Date().getTime();
@@ -27,20 +28,26 @@ Copyright (c) 2015 Julien Etienne. MIT License */
 
 
     function setRequestAnimationFramePrefix(iter) {
-        root.requestAnimationFrame = root[prefixes[iter] + rAFName[0]];
-        root.cancelAnimationFrame = root[prefixes[iter] + rAFName[1]] || root[prefixes[iter] + rAFName[2]];
+        if (!root.requestAnimationFrame) {
+            animationFrame.request = root[prefixes[iter] + vendor[0]];
+            animationFrame.cancel = root[prefixes[iter] + vendor[1]] || root[prefixes[iter] + vendor[2]];
+        } else {
+            animationFrame.request = root.requestAnimationFrame;
+            animationFrame.cancel = root.cancelAnimationFrame;
+        }
     }
 
 
     function setRequestAnimationFramePolyfill() {
-        if (!root.requestAnimationFrame) {
-            root.requestAnimationFrame = function(callback, element) {
+        if (!animationFrame.request) {
+            animationFrame.request = function(callback, element) {
                 var currTime = dateNow(),
                     timeToCall = Math.max(0, 16 - (currTime - previousTime)),
                     id = root.setTimeout(function() {
                         callback(currTime + timeToCall);
                     }, timeToCall);
                 previousTime = currTime + timeToCall;
+                console.log('yea');
                 return id;
             };
         }
@@ -48,35 +55,52 @@ Copyright (c) 2015 Julien Etienne. MIT License */
 
 
     function setCancelAnimationFramePolyfill() {
-        if (!root.cancelAnimationFrame) {
-            root.cancelAnimationFrame = function(id) {
+        if (!animationFrame.cancel) {
+            animationFrame.cancel = function(id) {
                 root.clearTimeout(id);
+                console.log('yea');
             };
         }
     }
 
+    function setTimingFunctions() {
+        //   for (i = 0; i < prefixes.length; ++i) {
+        //       setRequestAnimationFramePrefix(i);
+        //   }
+        function setNativeTimingFunctions() {
+            prefixes.map(function(prefix) {
+                if (!root.requestAnimationFrame) {
+                    animationFrame.request = root[prefix + vendor[0]];
+                    animationFrame.cancel = root[prefix + vendor[1]] || root[prefix + vendor[2]];
+                } else {
+                    animationFrame = root;
+                    animationFrame.request = requestAnimationFrame;
+                    animationFrame.cancel = cancelAnimationFrame;
+                }
+            });
+        }
 
-    for (i = 0; i < prefixes.length && !root.requestAnimationFrame; ++i) {
-        setRequestAnimationFramePrefix(i);
+        setNativeTimingFunctions();
+        setRequestAnimationFramePolyfill();
+        setCancelAnimationFramePolyfill();
     }
-    setRequestAnimationFramePolyfill();
-    setCancelAnimationFramePolyfill();
 
 
     var requestTimeout = function(fn, delay) {
         var start = dateNow();
 
         function increment(d) {
-            !this.k ? this.k = d : null;
+            this.k = !this.k ? d : null;
             return this.k += 1;
         }
 
         function loop() {
             this.delta = dateNow() - start;
-            this.delta >= delay ? fn.call() : requestAnimationFrame(loop);
+            // **Lint**
+            this.callHandler = this.delta >= delay ? fn.call() : animationFrame.request(loop);
         }
 
-        requestAnimationFrame(loop);
+        animationFrame.request(loop);
         return increment(0);
     };
 
@@ -99,6 +123,7 @@ Copyright (c) 2015 Julien Etienne. MIT License */
         }
 
         var handlerFunc = debounce(arguments),
+
             addEvent = function(handler) {
                 if (this.addEventListener)
                     this.addEventListener('resize', handler, true);
@@ -109,4 +134,5 @@ Copyright (c) 2015 Julien Etienne. MIT License */
         addEvent.call(this, handlerFunc);
     };
 
+    setTimingFunctions();
 }(window));

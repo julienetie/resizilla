@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Resizilla</title>
@@ -44,12 +45,22 @@
         z-index: 2;
     }
     
+    section:nth-child(3) {
+        width: 250px;
+        height: 250px;
+        z-index: 3;
+    }
+    
     section:nth-child(1) div {
         border: 2px dashed rgb(0, 255, 255);
     }
     
     section:nth-child(2) div {
         border: 2px dashed rgb(255, 255, 0);
+    }
+    
+    section:nth-child(3) div {
+        border: 2px dashed rgb(255, 80, 0);
     }
     
     span {
@@ -69,6 +80,7 @@
     }
     </style>
 </head>
+
 <body>
     <section>
         <div></div>
@@ -202,23 +214,97 @@
         <div></div>
         <div></div>
     </section>
+    <section id='red'>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </section>
     <span id='note'>Resize, change args</span>
     <script src='../resizilla.js'></script>
     <script>
     var get = 'getElementById',
         yellow = document[get]('yellow'),
-        note = document[get]('note')
-    done = 1;
+        red = document[get]('red'),
+        note = document[get]('note'),
+        done = 1;
 
     function resizeYellow() {
+
         var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
         var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         yellow.style.width = width + 'px';
         yellow.style.height = height + 'px';
-        done ? note.style.display = 'none' : null;
+        setTimeout(function() {
+            red.style.width = width + 'px';
+            red.style.height = height + 'px';
+        }, 400);
+
+
+       note.style.display = done ? null : 'none';
         done = 0;
     }
-
+ 
     resizilla.call(window, resizeYellow, 400, false);
     </script>
 </body>
