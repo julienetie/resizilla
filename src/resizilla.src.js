@@ -60,17 +60,6 @@ Copyright (c) 2015 Julien Etienne. MIT License */
         return Date.now() || new Date().getTime();
     }
 
-/*
-    function setRequestAnimationFramePrefix(iter) {
-        if (!root.requestAnimationFrame) {
-            animationFrame.request = root[prefixes[iter] + vendor[0]];
-            animationFrame.cancel = root[prefixes[iter] + vendor[1]] || root[prefixes[iter] + vendor[2]];
-        } else {
-            animationFrame.request = root.requestAnimationFrame;
-            animationFrame.cancel = root.cancelAnimationFrame;
-        }
-    }
-*/
 
     function setRequestAnimationFramePolyfill() {
         if (!animationFrame.request) {
@@ -97,23 +86,20 @@ Copyright (c) 2015 Julien Etienne. MIT License */
         }
     }
 
-    function setTimingFunctions() {
-        //   for (i = 0; i < prefixes.length; ++i) {
-        //       setRequestAnimationFramePrefix(i);
-        //   }
-        function setNativeTimingFunctions() {
-            prefixes.map(function(prefix) {
-                if (!root.requestAnimationFrame) {
-                    animationFrame.request = root[prefix + vendor[0]];
-                    animationFrame.cancel = root[prefix + vendor[1]] || root[prefix + vendor[2]];
-                } else {
-                    animationFrame = root;
-                    animationFrame.request = requestAnimationFrame;
-                    animationFrame.cancel = cancelAnimationFrame;
-                }
-            });
-        }
+    function setNativeTimingFunctions() {
+        prefixes.map(function(prefix) {
+            if (!root.requestAnimationFrame) {
+                animationFrame.request = root[prefix + vendor[0]];
+                animationFrame.cancel = root[prefix + vendor[1]] || root[prefix + vendor[2]];
+            } else {
+                animationFrame = root;
+                animationFrame.request = requestAnimationFrame;
+                animationFrame.cancel = cancelAnimationFrame;
+            }
+        });
+    }
 
+    function setTimingFunctions() {
         setNativeTimingFunctions();
         setRequestAnimationFramePolyfill();
         setCancelAnimationFramePolyfill();
