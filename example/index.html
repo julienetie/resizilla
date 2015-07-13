@@ -290,21 +290,19 @@
         done = 1;
 
     function resizeYellow() {
-
-        var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-        var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-        yellow.style.width = width + 'px';
-        yellow.style.height = height + 'px';
-        setTimeout(function() {
-            red.style.width = width + 'px';
-            red.style.height = height + 'px';
-        }, 400);
-
-
-       note.style.display = done ? null : 'none';
-        done = 0;
-    }
- 
+            var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            yellow.style.width = width + 'px';
+            yellow.style.height = height + 'px';
+            setTimeout(function() {
+                red.style.width = width + 'px';
+                red.style.height = height + 'px';
+            }, 400);
+            note.style.display = done ? null : 'none';
+            done = 0;
+        }
+    
+    //resizilla.enableMobileResize();
     resizilla.call(window, resizeYellow, 400, false);
     </script>
 </body>

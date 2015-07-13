@@ -126,6 +126,7 @@ Copyright (c) 2015 Julien Etienne. MIT License */
 
 
     root.resizilla = function(handler, delay, inception) {
+
         function debounce() {
             var timeout;
             return function() {
@@ -150,9 +151,13 @@ Copyright (c) 2015 Julien Etienne. MIT License */
                 else
                     this.attachEvent('onresize', handler);
             };
-
-        addEvent.call(this, handlerFunc);
+        if (screen.width > 1023 || this.mobile) {
+            addEvent.call(this, handlerFunc);
+        }
     };
+    resizilla.enableMobileResize = function() {
+        root.mobile = true;
+    }
 
     setTimingFunctions();
 }(window));
