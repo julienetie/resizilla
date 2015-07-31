@@ -1,0 +1,20 @@
+{
+  "name": "resizilla",
+  "version": "0.5.0",
+  "description": "Window resize with debounce. e.g., window.resizilla(handler, delay, inception)",
+  "main": "resizilla.js",
+  "keywords": [
+    "resize",
+    "window.onresize",
+    "debounce",
+    "window",
+    "event"
+  ],
+  "author": "Julien Etienne",
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "project"
+  ]
+}

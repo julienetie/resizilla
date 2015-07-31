@@ -1,6 +1,6 @@
 {
   "name": "resizilla",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "description": "Window resize with debounce. e.g., window.resizilla(handler, delay, inception)",
   "main": "resizilla.js",
   "directories": {
@@ -30,6 +30,7 @@
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.2.0"
+    "gulp-uglify": "^1.2.0",
+    "html5shiv": "^3.7.3"
   }
 }

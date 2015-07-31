@@ -16,94 +16,242 @@ Copyright (c) 2015 Julien Etienne. MIT License */
 
 (function(root) {
 
-    var animationFrame = {},
-        previousTime = 0,
-        prefixes = ['moz', 'webkit', 'o'],
+    var previousTime = 0,
         i;
-    var vendor = ['RequestAnimationFrame', 'CancelAnimationFrame', 'CancelRequestAnimationFrame'];
-
-    // Array.prototype.map polyfill
-    if (!Array.prototype.map) {
-        Array.prototype.map = function(callback, thisArg) {
-            var T, A, k;
-            if (this == null) {
-                throw new TypeError(' this is null or not defined');
-            }
-            var O = Object(this);
-            var len = O.length >>> 0;
-            if (typeof callback !== 'function') {
-                throw new TypeError(callback + ' is not a function');
-            }
-            if (arguments.length > 1) {
-                T = thisArg;
-            }
-            A = new Array(len);
-            k = 0;
-            while (k < len) {
-
-                var kValue, mappedValue;
-                if (k in O) {
-                    kValue = O[k];
-
-                    mappedValue = callback.call(T, kValue, k, O);
-                    A[k] = mappedValue;
-                }
-                k++;
-            }
-            return A;
-        };
-    }
-
-
 
     function dateNow() {
         return Date.now() || new Date().getTime();
     }
 
 
-    function setRequestAnimationFramePolyfill() {
-        if (!animationFrame.request) {
-            animationFrame.request = function(callback, element) {
-                var currTime = dateNow(),
-                    timeToCall = Math.max(0, 16 - (currTime - previousTime)),
-                    id = root.setTimeout(function() {
-                        callback(currTime + timeToCall);
-                    }, timeToCall);
-                previousTime = currTime + timeToCall;
-                console.log('yea');
-                return id;
-            };
-        }
-    }
+    /**
+     * @param  {String} type - request | cancel | native.
+     * @return {Function} Timing function.
+     */
+    function requestFrame
+        (type) {
+            // The only vendor prefixes required.
+            var vendors = ['moz', 'webkit'],
 
+                // Disassembled timing function abbreviations.
+                aF = 'AnimationFrame',
+                rqAF = 'Request' + aF,
 
-    function setCancelAnimationFramePolyfill() {
-        if (!animationFrame.cancel) {
-            animationFrame.cancel = function(id) {
-                root.clearTimeout(id);
-                console.log('yea');
-            };
-        }
-    }
+                // Final assigned functions.
+                assignedRequestAnimationFrame,
+                assignedCancelAnimationFrame,
 
-    function setNativeTimingFunctions() {
-        prefixes.map(function(prefix) {
-            if (!root.requestAnimationFrame) {
-                animationFrame.request = root[prefix + vendor[0]];
-                animationFrame.cancel = root[prefix + vendor[1]] || root[prefix + vendor[2]];
-            } else {
-                animationFrame = root;
-                animationFrame.request = requestAnimationFrame;
-                animationFrame.cancel = cancelAnimationFrame;
+                // Initial time of the timing lapse.
+                previousTime = 0,
+
+                mozRAF = window.mozRequestAnimationFrame,
+                mozCAF = window.mozCancelAnimationFrame,
+
+                // Checks for firefox 4 - 10 function pair mismatch.
+                hasMozMismatch = mozRAF && !mozCAF,
+
+                func;
+
+            // Date.now polyfill, mainly for legacy IE versions.
+            if (!Date.now) {
+                Date.now = function() {
+                    return new Date().getTime();
+                };
             }
-        });
-    }
 
-    function setTimingFunctions() {
-        setNativeTimingFunctions();
-        setRequestAnimationFramePolyfill();
-        setCancelAnimationFramePolyfill();
-    }
+            /**
+             * hasIOS6RequestAnimationFrameBug.
+             * @See {@Link https://gist.github.com/julienetie/86ac394ec41f1271ff0a}
+             * - for Commentary.
+             * @Copyright 2015 - Julien Etienne. 
+             * @License: MIT.
+             */
+            function hasIOS6RequestAnimationFrameBug() {
+                var webkitRAF = window.webkitRequestAnimationFrame,
+                    rAF = window.requestAnimationFrame,
+
+                    // CSS/ Device with max for iOS6 Devices.
+                    hasMobileDeviceWidth = screen.width <= 768 ? true : false,
+
+                    // Only supports webkit prefixed requestAnimtionFrane.
+                    requiresWebkitprefix = !(webkitRAF && rAF),
+
+                    // iOS6 webkit browsers don't support performance now.
+                    hasNoNavigationTiming = window.performance ? false : true,
+
+                    iOS6Notice = 'setTimeout is being used as a substitiue for' +
+                    'requestAnimationFrame due to a bug within iOS 6 builds',
+
+                    hasIOS6Bug = requiresWebkitprefix && hasMobileDeviceWidth &&
+                    hasNoNavigationTiming;
+
+                function bugCheckresults(timingFnA, timingFnB, notice) {
+                    if (timingFnA || timingFnB) {
+                        console.warn(notice);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+
+                function displayResults() {
+                    if (hasIOS6Bug) {
+                        return bugCheckresults(webkitRAF, rAF, iOS6Notice);
+                    } else {
+                        return false;
+                    }
+                }
+
+                return displayResults();
+            }
+
+            /**
+             * Native clearTimeout function.
+             * @return {Function}
+             */
+            function clearTimeoutWithId() {
+                return clearTimeout;
+            }
+
+            /**
+             * Based on a polyfill by Erik, introduced by Paul Irish & 
+             * further improved by Darius Bacon.
+             * @see  {@link http://www.paulirish.com/2011/
+             * requestanimationframe-for-smart-animating}
+             * @see  {@link https://github.com/darius/requestAnimationFrame/blob/
+             * master/requestAnimationFrame.js}
+             * @callback {Number} Timestamp.
+             * @return {Function} setTimeout Function.
+             */
+            function setTimeoutWithTimestamp(callback) {
+                var immediateTime = Date.now(),
+                    lapsedTime = Math.max(previousTime + 16, immediateTime);
+                return setTimeout(function() {
+                        callback(previousTime = lapsedTime);
+                    },
+                    lapsedTime - immediateTime);
+            }
+
+            /**
+             * Queries the native function, prefixed function 
+             * or use the setTimeoutWithTimestamp function.
+             * @return {Function}
+             */
+            function queryRequestAnimationFrame() {
+                if (Array.prototype.filter) {
+                    assignedRequestAnimationFrame = window['request' + aF] ||
+                        window[vendors.filter(function(vendor) {
+                            if (window[vendor + rqAF] !== undefined)
+                                return vendor;
+                        }) + rqAF] || setTimeoutWithTimestamp;
+                } else {
+                    return setTimeoutWithTimestamp;
+                }
+                if (!hasIOS6RequestAnimationFrameBug()) {
+                    return assignedRequestAnimationFrame;
+                } else {
+                    return setTimeoutWithTimestamp;
+                }
+            }
+
+            /**
+             * Queries the native function, prefixed function 
+             * or use the clearTimeoutWithId function.
+             * @return {Function}
+             */
+            function queryCancelAnimationFrame() {
+                var cancellationNames = [];
+                if (Array.prototype.map) {
+                    vendors.map(function(vendor) {
+                        return ['Cancel', 'CancelRequest'].map(
+                            function(cancellationNamePrefix) {
+                                cancellationNames.push(vendor +
+                                    cancellationNamePrefix + aF);
+                            });
+                    });
+                } else {
+                    return clearTimeoutWithId;
+                }
+
+                /**
+                 * Checks for the prefixed cancelAnimationFrame implementation.
+                 * @param  {Array} prefixedNames - An array of the prefixed names. 
+                 * @param  {Number} i - Iteration start point.
+                 * @return {Function} prefixed cancelAnimationFrame function.
+                 */
+                function prefixedCancelAnimationFrame(prefixedNames, i) {
+                    var cancellationFunction;
+                    for (; i < prefixedNames.length; i++) {
+                        if (window[prefixedNames[i]]) {
+                            cancellationFunction = window[prefixedNames[i]];
+                            break;
+                        }
+                    }
+                    return cancellationFunction;
+                }
+
+                // Use truthly function
+                assignedCancelAnimationFrame = window['cancel' + aF] ||
+                    prefixedCancelAnimationFrame(cancellationNames, 0) ||
+                    clearTimeoutWithId;
+
+                // Check for iOS 6 bug
+                if (!hasIOS6RequestAnimationFrameBug()) {
+                    return assignedCancelAnimationFrame;
+                } else {
+                    return clearTimeoutWithId;
+                }
+            }
+
+            function getRequestFn() {
+                if (hasMozMismatch) {
+                    return setTimeoutWithTimestamp;
+                } else {
+                    return queryRequestAnimationFrame();
+                }
+            }
+
+            function getCancelFn() {
+                return queryCancelAnimationFrame();
+            }
+
+            function setNativeFn() {
+                if (hasMozMismatch) {
+                    window.requestAnimationFrame = setTimeoutWithTimestamp;
+                    window.cancelAnimationFrame = clearTimeoutWithId;
+                } else {
+                    window.requestAnimationFrame = queryRequestAnimationFrame();
+                    window.cancelAnimationFrame = queryCancelAnimationFrame();
+                }
+            }
+
+            /**
+             * The type value "request" singles out firefox 4 - 10 and 
+             * assigns the setTimeout function if plausible.
+             */
+
+            switch (type) {
+                case 'request':
+                case '':
+                    func = getRequestFn();
+                    break;
+
+                case 'cancel':
+                    func = getCancelFn();
+                    break;
+
+                case 'native':
+                    setNativeFn();
+                    break;
+                default:
+                    throw new Error('RequestFrame parameter is not a type.');
+            }
+            return func;
+        }
+
+    var request = requestFrame('request');
+    var cancel = requestFrame('cancel');
+
 
 
     var requestTimeout = function(fn, delay) {
@@ -117,10 +265,10 @@ Copyright (c) 2015 Julien Etienne. MIT License */
         function loop() {
             this.delta = dateNow() - start;
             // **Lint**
-            this.callHandler = this.delta >= delay ? fn.call() : animationFrame.request(loop);
+            this.callHandler = this.delta >= delay ? fn.call() : request(loop);
         }
 
-        animationFrame.request(loop);
+        request(loop);
         return increment(0);
     };
 
@@ -129,17 +277,25 @@ Copyright (c) 2015 Julien Etienne. MIT License */
 
         function debounce() {
             var timeout;
+
             return function() {
                 var context = this,
                     args = arguments;
+
                 var lastCall = function() {
                     timeout = 0;
-                    if (!inception) handler.apply(context, args);
+                    if (!inception) {
+                        handler.apply(context, args);
+                    }
                 };
+
                 this.instant = inception && !timeout;
-                cancelAnimationFrame(timeout);
+                cancel(timeout);
                 timeout = requestTimeout(lastCall, delay);
-                if (this.instant) handler.apply(context, args);
+
+                if (this.instant) {
+                    handler.apply(context, args);
+                }
             };
         }
 
@@ -151,13 +307,15 @@ Copyright (c) 2015 Julien Etienne. MIT License */
                 else
                     this.attachEvent('onresize', handler);
             };
+
         if (screen.width > 1023 || this.mobile) {
             addEvent.call(this, handlerFunc);
         }
     };
+
     resizilla.enableMobileResize = function() {
         root.mobile = true;
-    }
+    };
 
-    setTimingFunctions();
 }(window));
+//.call(this));

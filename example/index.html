@@ -29,37 +29,37 @@
         float: left;
     }
     
-    section {
+    .section {
         position: absolute;
     }
     
-    section:nth-child(1) {
+    .section:nth-child(1) {
         height: 100%;
         width: 100%;
         z-index: 1;
     }
     
-    section:nth-child(2) {
+    .section:nth-child(2) {
         width: 500px;
         height: 500px;
         z-index: 2;
     }
     
-    section:nth-child(3) {
+    .section:nth-child(3) {
         width: 250px;
         height: 250px;
         z-index: 3;
     }
     
-    section:nth-child(1) div {
+    .section:nth-child(1) div {
         border: 2px dashed rgb(0, 255, 255);
     }
     
-    section:nth-child(2) div {
+    .section:nth-child(2) div {
         border: 2px dashed rgb(255, 255, 0);
     }
     
-    section:nth-child(3) div {
+    .section:nth-child(3) div {
         border: 2px dashed rgb(255, 80, 0);
     }
     
@@ -82,7 +82,7 @@
 </head>
 
 <body>
-    <section>
+    <div class='section'>
         <div></div>
         <div></div>
         <div></div>
@@ -147,8 +147,8 @@
         <div></div>
         <div></div>
         <div></div>
-    </section>
-    <section id='yellow'>
+    </div>
+    <div class='section' id='yellow'>
         <div></div>
         <div></div>
         <div></div>
@@ -213,8 +213,8 @@
         <div></div>
         <div></div>
         <div></div>
-    </section>
-    <section id='red'>
+    </div>
+    <div class='section' id='red'>
         <div></div>
         <div></div>
         <div></div>
@@ -279,7 +279,7 @@
         <div></div>
         <div></div>
         <div></div>
-    </section>
+    </div>
     <span id='note'>Resize, change args</span>
     <script src='../resizilla.js'></script>
     <script>

@@ -1,5 +1,4 @@
-#resizilla v0.3
---- 
+# resizilla v0.5
 Window resize with debounce & requestAnimationFrame.  
  
     resizilla(handler, delay, inception).call(window); 
@@ -10,33 +9,25 @@ Window resize with debounce & requestAnimationFrame.
 
 Recommendation: Use a moderate delay for consistency with legacy browsers. 
 
-####Current Browser support: 
+#### Browser support: 
 
-- Chrome 30+ 
-- Safari 6.1+ 
-- Firefox 30+ 
-- Opera 24+ 
-- IE10+ 
+- Chrome 14+ 
+- Safari 5.1+ 
+- Firefox 4+ 
+- Opera 10.6+ 
+- IE9+ (IE8< not yet tested)
 - Edge 
  
-####Current bugs:
+#### Mobile: 
+ 
+By default resizilla is inactive for mobile devices as it is rarely necessary and differs in behaviour amongst devices ( mobile refers to "devices widths" below 1024px / CSS pixels). If required for let's say *iframes* use the enableMobileResize method:
 
-- Safari 6 
-- Safari 5 
-- Opera 12.1 
-- FF10 
-- IE9 
-- IE8 
- 
-####Mobile devices: 
- 
-window resizilla support is rarely necessary for for mobile devices, but can be
-helpful with iframes. Mobile support (devices widths below 1024px) 
-is inactive by default. To enable use: 
- 
+``` 
     resizilla.enableMobileResize();
- 
-The behavior of mobile orientation & resizing varies amongst devices. 
+```
+### To do
+- Decouple window object & this for multiple usage other than window resize.
+- Fix example for IE8<.
 
 --- 
 
