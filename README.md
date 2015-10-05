@@ -1,4 +1,4 @@
-# resizilla v0.5
+# resizilla v5
 Window resize with debounce & requestAnimationFrame.  
  
     resizilla(handler, delay, inception).call(window); 

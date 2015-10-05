@@ -1,6 +1,6 @@
 {
   "name": "resizilla",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "description": "Window resize with debounce. e.g., window.resizilla(handler, delay, inception)",
   "main": "resizilla.js",
   "keywords": [
