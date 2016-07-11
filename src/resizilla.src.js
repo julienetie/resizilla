@@ -34,6 +34,7 @@ function resizilla(optionsHandler, delay, incept) {
         // Defaults
         options.orientationChange = true;
         options.useCapture = true;
+        options.incept = false;
 
     if(optionsHandler.constructor === {}.constructor){
         options.handler = optionsHandler.handler;
@@ -44,7 +45,7 @@ function resizilla(optionsHandler, delay, incept) {
     }else{
         options.handler = optionsHandler;
         options.delay = delay;
-        options.incept = incept;
+        options.incept = typeof options.incept === 'undefined' ? options.incept : incept;
     }
 
 
@@ -71,7 +72,7 @@ function resizilla(optionsHandler, delay, incept) {
 
 
     function addWindowEvent(handler) {
-        self.addEventListener('resize', options.handler, options.useCapture);
+        self.addEventListener('resize', handler, options.useCapture);
     }
 
 
