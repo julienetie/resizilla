@@ -1,9 +1,6 @@
-var previousTime = 0;
-var i;
 var request = requestFrame('request');
 var cancel = requestFrame('cancel');
 var self = this;
-var enableMobile = false;
 var store = {};
 
 
@@ -22,63 +19,76 @@ function requestTimeout(fn, delay) {
 
     request(loop);
     return increment(0);
-};
+}
 
 
-function resizilla(handler, delay, inception) {
+function handlerCallback(handler, delay, incept) {
+    handler.apply(self, handler, delay, incept);
+}
 
-    function debounce(handler, delay, inception) {
+
+function resizilla(optionsHandler, delay, incept) {
+    var options = {};
+    resizilla.options = options;
+  
+        // Defaults
+        options.orientationChange = true;
+        options.useCapture = true;
+
+    if(optionsHandler.constructor === {}.constructor){
+        options.handler = optionsHandler.handler;
+        options.delay = optionsHandler.delay;
+        options.incept = optionsHandler.incept;
+        options.orientationChange = optionsHandler.orientationChange;
+        options.useCapture = optionsHandler.useCapture;
+    }else{
+        options.handler = optionsHandler;
+        options.delay = delay;
+        options.incept = incept;
+    }
+
+
+    function debounce(handler, delay, incept) {
         var timeout;
-
-        function handlerCallback(handler, delay, inception){
-            handler.apply(self, handler, delay, inception);
-        }
 
         return function() {
             var lastCall = function() {
                 timeout = 0;
-                if (!inception) {
-                    handlerCallback(handler, delay, inception);
+                if (!incept) {
+                    handlerCallback(handler, delay, incept);
                 }
             };
 
-            store.instant = inception && !timeout;
+            store.instant = incept && !timeout;
             cancel(timeout);
             timeout = requestTimeout(lastCall, delay);
 
             if (store.instant) {
-                handlerCallback(handler, delay, inception);
+                handlerCallback(handler, delay, incept);
             }
         };
     }
 
 
-    function addEvent(handler) {
-        self.addEventListener('resize', handler, true);
-    };
-
-
-    if (typeof window.orientation === 'undefined' || enableMobile) {
-        addEvent(debounce(handler, delay, inception));
+    function addWindowEvent(handler) {
+        self.addEventListener('resize', options.handler, options.useCapture);
     }
 
-    var isOrientation = [0,90,180,270].some(function(orientation){
-        return orientation === Math.abs(window.orientation);
-    })
 
- //    if(isOrientation){
- //        handler
- //    }
- // alert(isOrientation);
-    // if(window.orientation === 0){
-    //     handler
-    // }
+    addWindowEvent(debounce(options.handler, options.delay, options.incept));
 
+
+    if(options.orientationChange){
+        self.addEventListener('orientationchange', options.handler, options.useCapture);
+    }
+}
+
+
+resizilla.destroy = function(type) {
+    if(!type || type === 'all'){
+        window.removeEventListener('resize', this.options.handler, this.options.useCapture);
+        window.removeEventListener('orientationchange', this.options.handler, this.options.useCapture);
+    }else{
+        window.removeEventListener(type, this.options.handler, this.options.useCapture);
+    }
 };
-
-
-resizilla.enableMobileResize = function() {
-    enableMobile = true;
-};
-
-// alert(window.orientation)

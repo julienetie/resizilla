@@ -13,8 +13,8 @@ var src = [
     // Wrapper start.
     './src/amd-wrapper-start.js',
 
-    // addEventListener polyfill.
-    './libs/add-event-listener.js',
+    // RequestAnimationFrame polyfill.
+    './libs/orientationchange.js',
 
     // RequestAnimationFrame polyfill.
     './libs/request-frame.js',
@@ -45,5 +45,5 @@ gulp.task('default', ['build']);
  * Watch for changes.
  */
 gulp.task('watch', function(){
-    gulp.watch('./src/**.js', ['build']);
+    gulp.watch(['./src/**.js','./libs/**.js'], ['build']);
 });
