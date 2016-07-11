@@ -281,7 +281,7 @@
         <div></div>
     </div>
     <span id='note'>Resize, change args</span>
-    <script src='../resizilla.js'></script>
+    <script src='../dist/resizilla.js'></script>
     <script>
     var get = 'getElementById',
         yellow = document[get]('yellow'),
@@ -301,9 +301,9 @@
             note.style.display = done ? null : 'none';
             done = 0;
         }
-    
+    console.log(resizilla)
     //resizilla.enableMobileResize();
-    resizilla.call(window, resizeYellow, 400, false);
+    resizilla(resizeYellow, 400, false);
     </script>
 </body>
 
