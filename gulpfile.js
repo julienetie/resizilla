@@ -1,9 +1,23 @@
-var gulp = require('gulp'),
-    rename = require('gulp-rename'),
-    uglify = require('gulp-uglify'),
-    concat = require('gulp-concat'),
-    plumber = require('gulp-plumber'),
-    notify = require('gulp-notify');
+var gulp = require('gulp');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
+var concat = require('gulp-concat');
+var plumber = require('gulp-plumber');
+var notify = require('gulp-notify');
+var header = require('gulp-header');
+var pkg = require('./package.json');
+var bump = require('gulp-bump');
+
+var banner = ['/**',
+        ' * <%= pkg.name %>',
+        ' * Version:  <%= pkg.version %>',
+        ' * License:  <%= pkg.license %>',
+        ' * Copyright <%= pkg.author %> 2015 - ' + new Date().getFullYear() +' All Rights Reserved.',
+        ' * github:  <%= pkg.repository.url %>',
+        ' *‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾',
+        ' */',
+        ''
+    ].join('\n');
 
 
 /**
@@ -31,8 +45,14 @@ gulp.task('build', function() {
     return gulp.src(src)
         .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
         .pipe(concat('resizilla.js'))
+        .pipe(header(banner, {
+                pkg: pkg
+            }))
         .pipe(gulp.dest('./dist'))
         .pipe(uglify())
+        .pipe(header(banner, {
+                pkg: pkg
+            }))
         .pipe(rename('resizilla.min.js'))
         .pipe(gulp.dest('./dist'));
 });
