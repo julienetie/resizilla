@@ -6,9 +6,11 @@
 #### Why?
 - When the user resizes a range of events are fired when using:  ```window.onresize``` & ```window.addEventListener()```. Resizilla allows you to reduce and control the frequency of calls using a **_debounce_** algorithm. **TLDR It performs better**.
 - Resizilla uses the next available animation frame ( **_requestAnimationFrame_** ) rather than setTimeout for better optimization.
-- S̶u̶p̶p̶o̶r̶t̶ ̶f̶o̶r̶ ̶m̶o̶b̶i̶l̶e̶ ̶*̶*̶o̶r̶i̶e̶n̶t̶a̶t̶i̶o̶n̶ ̶c̶h̶a̶n̶g̶e̶*̶*̶ ̶s̶e̶e̶ ̶b̶e̶l̶o̶w̶ TBA
+- Support for orientation change.
+- AMD compliant.
+- Built in destroy method.
 
-
+____
 #### How?
 **```resizilla(handler, delay, incept);```** 
  
@@ -16,31 +18,64 @@
 - delay: Delay of the function call in ms on resize
 - incept: If true the function call at the beginning of the detection period, if false the call will be at the end of the detection period (false by default)
 
-Recommendation: Use a moderate delay for consistency with legacy browsers. 
+
+or 
+
+**``` resizilla({ ```**
+**```   handler: Function, ```**
+**```   delay: Milliseconds, ```**
+**```   incept: Boolean, ```**
+**```   orientationChange: Boolean, ```**
+**```   useCapture: Boolean ```**
+**``` }); ```**
+
+- useCapture: Register the event handler for the capturing/ bubbling phase.
+- orientationChange: See below...
 
 
-#### Browser support: 
+_For general use, use a moderate delay e.g. `incept: 200`_
+
+____
+#### Tested browsers:
 
 
 | Chrome 14+ | Safari 5.1+ | Firefox 4+ | Opera 10.6+ | IE9+ | Edge| IE8
 |:-----------|:------------|:------------|:------------|:------------|:------------|:------------|
-|✓ |✓|✓|✓|✓|✓|✗ not tested|
+|✓ |✓|✓|✓|✓|✓|✗|
 
-
+| iPhone 3GS+| iPad 2+ | Android 2.2+ | Windows Phone 8.1+ |
+|:-----------|:------------|:------------|:------------|:------------|:------------|:------------|
+|✓ |✓|✓|✓|
+____
 #### Mobile: 
  
-By default resizilla is inactive for mobile devices as it is rarely necessary and differs in behaviour amongst devices ( mobile refers to "devices widths" below 1024px / CSS pixels). If required for let's say *iframes* use the enableMobileResize method:
+By default, resizilla calls the handler when the "orientationchange" event is fired. This can be disabled using 
 
-``` 
-    resizilla.enableMobileResize();
-```
+**``` resizilla({
+    handler: () => { // do something },
+    delay: 250,
+    incept: true,
+    orientationChange: false
+}); ```**
+____
+#### Destroy: 
+ 
+Remove the event listener by using the below:
 
-#### No element resize support?
+**``` resizilla.destroy(); ```**
+____
+#### The example:
 
-Nope, and purposely done, elements resizing is a bit of a different paradigm and may create a mess of issues if intertwined. To detect changes on elements checkout [getComputedStyle](https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle) and [transitionEnd](https://developer.mozilla.org/en-US/docs/Web/Events/transitionend).
+The current example only needs to reveal the transition of the debounce to satisfy as working.
 
+#### So no element resize support?
 
+Nope, and with good reason. Elements resize detection is a different paradigm, to detect changes that occur with elements checkout [getComputedStyle](https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle),  [transitionEnd](https://developer.mozilla.org/en-US/docs/Web/Events/transitionend) & [MutationObserver](https://developer.mozilla.org/en/docs/Web/API/MutationObserver).
+
+_(Original ASCII art by Mozilla)_
+
+Big thanks to [BrowsreStack](https://www.browserstack.com) for sponsoring this project via cross browser testing.  
 
 [MIT License](https://github.com/julienetie/resizilla/blob/master/LICENSE) 
 
-Copyright (c) 2015 Julien Etienne
+Copyright (c) 2015 Julien Etienne 
