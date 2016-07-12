@@ -1,14 +1,13 @@
 {
   "name": "resizilla",
   "version": "0.6.0",
-  "description": "Window resize with debounce. e.g., window.resizilla(handler, delay, inception)",
+  "description": "A Better Window Resize",
   "main": "resizilla.js",
   "directories": {
-    "example": "example",
-    "test": "test"
+    "example": "example"
   },
   "scripts": {
-    "v": "npm version process.env.VERSION && bower version process.env.VERSION"
+    "test": "gulp"
   },
   "repository": {
     "type": "git",

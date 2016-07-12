@@ -62,7 +62,11 @@ ____
  
 Remove the event listener by using the below:
 
-**``` resizilla.destroy(); ```**
+**``` resizilla.destroy(event); ```**
+
+- Leave empty to destroy both events,
+- Pass "resize" or "orientationchange" to kill those specific events.
+
 ____
 #### The example:
 
