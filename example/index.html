@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Resizilla</title>
     <style>
     body,
@@ -281,7 +282,7 @@
         <div></div>
     </div>
     <span id='note'>Resize, change args</span>
-    <script src='../resizilla.js'></script>
+    <script src='../dist/resizilla.js'></script>
     <script>
     var get = 'getElementById',
         yellow = document[get]('yellow'),
@@ -301,9 +302,7 @@
             note.style.display = done ? null : 'none';
             done = 0;
         }
-    
-    //resizilla.enableMobileResize();
-    resizilla.call(window, resizeYellow, 400, false);
+    resizilla(resizeYellow, 400, false);
     </script>
 </body>
 

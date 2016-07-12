@@ -21,22 +21,82 @@
 vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| ''
 
 Copyright (c) 2015 Julien Etienne. MIT License */
+(function (window) {
 
-(function(root) {
 
-    var previousTime = 0,
-        i;
+/*! A fix for the iOS orientationchange zoom bug.
+ Script by @scottjehl, rebound by @wilto.
+ MIT / GPLv2 License.
+*/
+(function(w){
+  
+  // This fix addresses an iOS bug, so return early if the UA claims it's something else.
+  var ua = navigator.userAgent;
+  if( !( /iPhone|iPad|iPod/.test( navigator.platform ) && /OS [1-5]_[0-9_]* like Mac OS X/i.test(ua) && ua.indexOf( "AppleWebKit" ) > -1 ) ){
+    return;
+  }
 
-    function dateNow() {
-        return Date.now() || new Date().getTime();
+    var doc = w.document;
+
+    if( !doc.querySelector ){ return; }
+
+    var meta = doc.querySelector( "meta[name=viewport]" ),
+        initialContent = meta && meta.getAttribute( "content" ),
+        disabledZoom = initialContent + ",maximum-scale=1",
+        enabledZoom = initialContent + ",maximum-scale=10",
+        enabled = true,
+    x, y, z, aig;
+
+    if( !meta ){ return; }
+
+    function restoreZoom(){
+        meta.setAttribute( "content", enabledZoom );
+        enabled = true;
     }
 
+    function disableZoom(){
+        meta.setAttribute( "content", disabledZoom );
+        enabled = false;
+    }
+  
+    function checkTilt( e ){
+    aig = e.accelerationIncludingGravity;
+    x = Math.abs( aig.x );
+    y = Math.abs( aig.y );
+    z = Math.abs( aig.z );
+        
+    // If portrait orientation and in one of the danger zones
+        if( (!w.orientation || w.orientation === 180) && ( x > 7 || ( ( z > 6 && y < 8 || z < 8 && y > 6 ) && x > 5 ) ) ){
+      if( enabled ){
+        disableZoom();
+      }         
+        }
+    else if( !enabled ){
+      restoreZoom();
+        }
+    }
+  
+  w.addEventListener( "orientationchange", restoreZoom, false );
+  w.addEventListener( "devicemotion", checkTilt, false );
 
-    /**
-     * @param  {String} type - request | cancel | native.
-     * @return {Function} Timing function.
-     */
-    function requestFrame(type) {
+})( this );
+
+/**
+ *  request-frame - requestAnimationFrame & cancelAnimationFrame polyfill for
+ *   optimal cross-browser development.
+ *    Version:  v1.4.0
+ *     License:  MIT
+ *      Copyright Julien Etienne 2015 All Rights Reserved.
+ *        github:  https://github.com/julienetie/request-frame
+ *‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+ */
+(function (window) {
+
+/**
+ * @param  {String} type - request | cancel | native.
+ * @return {Function} Timing function.
+ */
+function requestFrame(type) {
     // The only vendor prefixes required.
     var vendors = ['moz', 'webkit'],
 
@@ -256,73 +316,139 @@ Copyright (c) 2015 Julien Etienne. MIT License */
     return func;
 }
 
-    var request = requestFrame('request');
-    var cancel = requestFrame('cancel');
+
+// Node.js/ CommonJS
+if (typeof module === 'object' && typeof module.exports === 'object') {
+module.exports = exports = requestFrame;
+}
+
+// AMD
+else if (typeof define === 'function' && define.amd) {
+define(function() {
+  return requestFrame;
+});
+}
+
+// Default to window as global
+else if (typeof window === 'object') {
+window.requestFrame = requestFrame;
+}
+/* global -module, -exports, -define */
+
+}((typeof window === "undefined" ? {} : window)));
+
+var request = requestFrame('request');
+var cancel = requestFrame('cancel');
+var self = this;
+var store = {};
 
 
+function requestTimeout(fn, delay) {
+    var start = Date.now();
 
-    var requestTimeout = function(fn, delay) {
-        var start = dateNow();
+    function increment(d) {
+        store.k = !store.k ? d : null;
+        return store.k += 1;
+    }
 
-        function increment(d) {
-            this.k = !this.k ? d : null;
-            return this.k += 1;
-        }
+    function loop() {
+        store.delta = Date.now() - start;
+        store.callHandler = store.delta >= delay ? fn.call() : request(loop);
+    }
 
-        function loop() {
-            this.delta = dateNow() - start;
-            // **Lint**
-            this.callHandler = this.delta >= delay ? fn.call() : request(loop);
-        }
-
-        request(loop);
-        return increment(0);
-    };
+    request(loop);
+    return increment(0);
+}
 
 
-    root.resizilla = function(handler, delay, inception) {
+function handlerCallback(handler, delay, incept) {
+    handler.apply(self, handler, delay, incept);
+}
 
-        function debounce() {
-            var timeout;
 
-            return function() {
-                var context = this,
-                    args = arguments;
+function resizilla(optionsHandler, delay, incept) {
+    var options = {};
+    resizilla.options = options;
+  
+        // Defaults
+        options.orientationChange = true;
+        options.useCapture = true;
+        options.incept = false;
 
-                var lastCall = function() {
-                    timeout = 0;
-                    if (!inception) {
-                        handler.apply(context, args);
-                    }
-                };
+    if(optionsHandler.constructor === {}.constructor){
+        options.handler = optionsHandler.handler;
+        options.delay = optionsHandler.delay;
+        options.incept = optionsHandler.incept;
+        options.orientationChange = optionsHandler.orientationChange;
+        options.useCapture = optionsHandler.useCapture;
+    }else{
+        options.handler = optionsHandler;
+        options.delay = delay;
+        options.incept = typeof options.incept === 'undefined' ? options.incept : incept;
+    }
 
-                this.instant = inception && !timeout;
-                cancel(timeout);
-                timeout = requestTimeout(lastCall, delay);
 
-                if (this.instant) {
-                    handler.apply(context, args);
+    function debounce(handler, delay, incept) {
+        var timeout;
+
+        return function() {
+            var lastCall = function() {
+                timeout = 0;
+                if (!incept) {
+                    handlerCallback(handler, delay, incept);
                 }
             };
-        }
 
-        var handlerFunc = debounce(arguments),
+            store.instant = incept && !timeout;
+            cancel(timeout);
+            timeout = requestTimeout(lastCall, delay);
 
-            addEvent = function(handler) {
-                if (this.addEventListener)
-                    this.addEventListener('resize', handler, true);
-                else
-                    this.attachEvent('onresize', handler);
-            };
+            if (store.instant) {
+                handlerCallback(handler, delay, incept);
+            }
+        };
+    }
 
-        if (screen.width > 1023 || this.mobile) {
-            addEvent.call(this, handlerFunc);
-        }
-    };
 
-    resizilla.enableMobileResize = function() {
-        root.mobile = true;
-    };
+    function addWindowEvent(handler) {
+        self.addEventListener('resize', handler, options.useCapture);
+    }
 
-}(window));
-//.call(this));
+
+    addWindowEvent(debounce(options.handler, options.delay, options.incept));
+
+
+    if(options.orientationChange){
+        self.addEventListener('orientationchange', options.handler, options.useCapture);
+    }
+}
+
+
+resizilla.destroy = function(type) {
+    if(!type || type === 'all'){
+        window.removeEventListener('resize', this.options.handler, this.options.useCapture);
+        window.removeEventListener('orientationchange', this.options.handler, this.options.useCapture);
+    }else{
+        window.removeEventListener(type, this.options.handler, this.options.useCapture);
+    }
+};
+
+// Node.js/ CommonJS
+if (typeof module === 'object' && typeof module.exports === 'object') {
+    module.exports = exports = resizilla;
+}
+
+// AMD
+else if (typeof define === 'function' && define.amd) {
+    define(function() {
+        return resizilla;
+    });
+}
+
+// Default to window as global
+else if (typeof window === 'object') {
+    window.resizilla = resizilla;
+}
+/* global -module, -exports, -define */
+
+}((typeof window === "undefined" ? {} : window)));

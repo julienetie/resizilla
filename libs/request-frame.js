@@ -1,34 +1,19 @@
-/*           _.-~-.
-           7''  Q..\
-        _7         (_
-      _7  _/    _q.  /
-    _7 . ___  /VVvv-'_                                            .
-   7/ / /~- \_\\      '-._     .-'                      /       //
-  ./ ( /-~-/  ||'=.__  '::. '-~'' {             ___   /  //     ./{
- V   V-~-~|   ||   __''_   ':::.   ''~-~.___.-'' _/  // / {_   /  {  /
-  VV/-~-~-|  / \ .'__'. '.  '::  ____               _ _ _        ''.
-  / /~~~~||  VVV/ /  \ )  \     |  _ \ ___  ___(_)___(_) | | __ _   .::'
- / (~-~-~\\.-' /    \'   \::::. | |_) / _ \/ __| |_  / | | |/ _` | :::'
-/..\    /..\__/      '     '::: |  _ <  __/\__ \ |/ /| | | | (_| | ::'
-vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| ''
+/**
+ *  request-frame - requestAnimationFrame & cancelAnimationFrame polyfill for
+ *   optimal cross-browser development.
+ *    Version:  v1.4.0
+ *     License:  MIT
+ *      Copyright Julien Etienne 2015 All Rights Reserved.
+ *        github:  https://github.com/julienetie/request-frame
+ *‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+ */
+(function (window) {
 
-Copyright (c) 2015 Julien Etienne. MIT License */
-
-(function(root) {
-
-    var previousTime = 0,
-        i;
-
-    function dateNow() {
-        return Date.now() || new Date().getTime();
-    }
-
-
-    /**
-     * @param  {String} type - request | cancel | native.
-     * @return {Function} Timing function.
-     */
-    function requestFrame(type) {
+/**
+ * @param  {String} type - request | cancel | native.
+ * @return {Function} Timing function.
+ */
+function requestFrame(type) {
     // The only vendor prefixes required.
     var vendors = ['moz', 'webkit'],
 
@@ -248,73 +233,23 @@ Copyright (c) 2015 Julien Etienne. MIT License */
     return func;
 }
 
-    var request = requestFrame('request');
-    var cancel = requestFrame('cancel');
 
+// Node.js/ CommonJS
+if (typeof module === 'object' && typeof module.exports === 'object') {
+module.exports = exports = requestFrame;
+}
 
+// AMD
+else if (typeof define === 'function' && define.amd) {
+define(function() {
+  return requestFrame;
+});
+}
 
-    var requestTimeout = function(fn, delay) {
-        var start = dateNow();
+// Default to window as global
+else if (typeof window === 'object') {
+window.requestFrame = requestFrame;
+}
+/* global -module, -exports, -define */
 
-        function increment(d) {
-            this.k = !this.k ? d : null;
-            return this.k += 1;
-        }
-
-        function loop() {
-            this.delta = dateNow() - start;
-            // **Lint**
-            this.callHandler = this.delta >= delay ? fn.call() : request(loop);
-        }
-
-        request(loop);
-        return increment(0);
-    };
-
-
-    root.resizilla = function(handler, delay, inception) {
-
-        function debounce() {
-            var timeout;
-
-            return function() {
-                var context = this,
-                    args = arguments;
-
-                var lastCall = function() {
-                    timeout = 0;
-                    if (!inception) {
-                        handler.apply(context, args);
-                    }
-                };
-
-                this.instant = inception && !timeout;
-                cancel(timeout);
-                timeout = requestTimeout(lastCall, delay);
-
-                if (this.instant) {
-                    handler.apply(context, args);
-                }
-            };
-        }
-
-        var handlerFunc = debounce(arguments),
-
-            addEvent = function(handler) {
-                if (this.addEventListener)
-                    this.addEventListener('resize', handler, true);
-                else
-                    this.attachEvent('onresize', handler);
-            };
-
-        if (screen.width > 1023 || this.mobile) {
-            addEvent.call(this, handlerFunc);
-        }
-    };
-
-    resizilla.enableMobileResize = function() {
-        root.mobile = true;
-    };
-
-}(window));
-//.call(this));
+}((typeof window === "undefined" ? {} : window)));
