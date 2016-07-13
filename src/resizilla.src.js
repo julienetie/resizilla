@@ -2,19 +2,26 @@ var request = requestFrame('request');
 var cancel = requestFrame('cancel');
 var self = this;
 var store = {};
+var start;
 
 
-function requestTimeout(fn, delay) {
-    var start = Date.now();
+/**
+ * An Alternative to setTimeout using requestAnimationFrame
+ * @param  {Function} handler
+ * @param  {Number}   delay - In milisectonds 
+ * @return {Number}   time lapse
+ */
+function requestTimeout(handler, delay) {
+    start = Date.now();
 
-    function increment(d) {
-        store.k = !store.k ? d : null;
+    function increment(constant) {
+        store.k = !store.k ? constant : null;
         return store.k += 1;
     }
 
     function loop() {
         store.delta = Date.now() - start;
-        store.callHandler = store.delta >= delay ? fn.call() : request(loop);
+        store.callHandler = store.delta >= delay ? handler.call() : request(loop);
     }
 
     request(loop);
@@ -22,11 +29,22 @@ function requestTimeout(fn, delay) {
 }
 
 
+/**
+ * A wrapper for the handler using the window context
+ */
 function handlerCallback(handler, delay, incept) {
     handler.apply(self, handler, delay, incept);
 }
 
 
+/**
+ * [resizilla description]
+ * @public
+ * @param  {[type]} optionsHandler [description]
+ * @param  {[type]} delay          [description]
+ * @param  {[type]} incept         [description]
+ * @return {[type]}                [description]
+ */
 function resizilla(optionsHandler, delay, incept) {
     var options = {};
     resizilla.options = options;
