@@ -38,12 +38,12 @@ function handlerCallback(handler, delay, incept) {
 
 
 /**
- * [resizilla description]
+ * resizilla function
  * @public
- * @param  {[type]} optionsHandler [description]
- * @param  {[type]} delay          [description]
- * @param  {[type]} incept         [description]
- * @return {[type]}                [description]
+ * @param  {Function | Object} optionsHandler The handler or options as an 
+ * object literal.
+ * @param  {Number} delay          Delay in MS
+ * @param  {Boolean} incept        Incept from start of delay or till the end.
  */
 function resizilla(optionsHandler, delay, incept) {
     var options = {};
@@ -103,6 +103,10 @@ function resizilla(optionsHandler, delay, incept) {
 }
 
 
+/**
+ * Remove all or one of the event listeners
+ * @param  {String} type.
+ */
 resizilla.destroy = function(type) {
     if(!type || type === 'all'){
         window.removeEventListener('resize', this.options.handler, this.options.useCapture);
