@@ -12,6 +12,19 @@
 
 ____
 #### How?
+
+##### via npm
+```
+npm i resizilla --save
+```
+##### via bower
+```
+bower i resizilla
+```
+##### via [src](https://github.com/julienetie/resizilla/tree/master/dist)
+
+#### Usage:
+
 **```resizilla(handler, delay, incept);```** 
  
 - handler: Function to execute on resize
@@ -82,4 +95,4 @@ Big thanks to [BrowsreStack](https://www.browserstack.com) for sponsoring this p
 
 [MIT License](https://github.com/julienetie/resizilla/blob/master/LICENSE) 
 
-Copyright (c) 2015 Julien Etienne 
+Copyright (c) 2015 Julien Etienne
