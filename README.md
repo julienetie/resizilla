@@ -22,7 +22,7 @@ npm i resizilla --save
 bower i resizilla
 ```
 ##### via [src](https://github.com/julienetie/resizilla/tree/master/dist)
-
+____
 #### Usage:
 
 **```resizilla(handler, delay, incept);```** 
