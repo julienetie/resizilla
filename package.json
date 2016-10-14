@@ -1,6 +1,6 @@
 {
   "name": "resizilla",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A Better Window Resize",
   "main": "resizilla.js",
   "directories": {
