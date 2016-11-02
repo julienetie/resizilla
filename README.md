@@ -1,5 +1,26 @@
 ![img](http://oi68.tinypic.com/33m0pbr.jpg)
 
+```php
+   *** Important API Changes***
+```
+   #### For:
+   - resizilla.js
+   - resizilla.es.js
+
+   version 0.7+ requires the Request-frame or an alternative requestAnimationFrame & cancelAnimationFrame polyfill. 
+
+	If you need to use both Request-frame and Resizilla check out [4d](https://github.com/envidia/4d) which includes both libraries and weighs under 2kB gzipped.
+
+- [4d](https://github.com/envidia/4d)
+- [requestFrame](https://github.com/julienetie/request-frame)
+
+   #### For:
+   - resizilla.polyfilljs
+   - resizilla.polyfill.es.js
+   
+ These distributions include the Request-frame polyfill.
+
+
 ## resizilla
 ### A Better Window Resize
 
