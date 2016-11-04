@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"test": "gulp",
-		"bump": "node ./bump.js 0.6.2"
+		"bump": "node ./bump.js"
 	},
 	"repository": {
 		"type": "git",
