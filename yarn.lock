@@ -2229,6 +2229,14 @@ sequencify@~0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/sequencify/-/sequencify-0.0.7.tgz#90cff19d02e07027fd767f5ead3e7b95d1e7380c"
 
+set-animation-frame:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/set-animation-frame/-/set-animation-frame-0.1.1.tgz#92b2d30f63912ea5bbb68f93ec0da5d701942bf8"
+
+set-animation-interval:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/set-animation-interval/-/set-animation-interval-0.0.2.tgz#0e154d0bbc0d896d9b7d3e31a5cb306e5f06c4bc"
+
 shellwords@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.0.tgz#66afd47b6a12932d9071cbfd98a52e785cd0ba14"
@@ -2478,6 +2486,10 @@ vinyl@^0.5.0:
     clone "^1.0.0"
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
+
+volve:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/volve/-/volve-0.0.4.tgz#ac0a71a989f751a7f97be938fa4b3e32dd51676e"
 
 which@^1.0.5, which@^1.2.10:
   version "1.2.11"

@@ -1,3 +1,3 @@
-import pkg from 'pkg.json';
+import resizilla from './resizilla';
 
-console.log(pkg);
+export default resizilla;
