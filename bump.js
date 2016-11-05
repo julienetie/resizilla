@@ -1,11 +1,9 @@
 /** 
  * Bumps the distribution and package.json
  */
-
 const mz = require('mz/fs');
 const colors = require('colors');
 const fs = require('fs');
-const formatJSON = require('format-json');
 const version = process.argv[2];
 
 

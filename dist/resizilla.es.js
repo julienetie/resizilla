@@ -1,3 +1,5 @@
+var version = '0.6.2';
+
 /**
  *  volve - Tiny, Performant Debounce and Throttle Functions,
  *     License:  MIT
@@ -53,6 +55,20 @@ function debounce(callback, delay, lead) {
     };
 }
 
+/*           _.-~-.
+           7''  Q..\
+        _7         (_
+      _7  _/    _q.  /
+    _7 . ___  /VVvv-'_                                            .
+   7/ / /~- \_\\      '-._     .-'                      /       //
+  ./ ( /-~-/  ||'=.__  '::. '-~'' {             ___   /  //     ./{
+ V   V-~-~|   ||   __''_   ':::.   ''~-~.___.-'' _/  // / {_   /  {  /
+  VV/-~-~-|  / \ .'__'. '.  '::  ____               _ _ _        ''.
+  / /~~~~||  VVV/ /  \ )  \     |  _ \ ___  ___(_)___(_) | | __ _   .::'
+ / (~-~-~\\.-' /    \'   \::::. | |_) / _ \/ __| |_  / | | |/ _` | :::'
+/..\    /..\__/      '     '::: |  _ <  __/\__ \ |/ /| | | | (_| | ::'
+vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| '' */
+
 /**
  * Check if value is an Array.
  * @param  {Array} type.
@@ -80,7 +96,7 @@ const isObject = value => {
  * @param  {Boolean} incept        Incept from start of delay or till the end.
  */
 function resizilla$1(optionsHandler, delay, incept) {
-    var options = {};
+    const options = {};
     resizilla$1.options = options;
 
     // Defaults
@@ -119,5 +135,7 @@ resizilla$1.destroy = function (type) {
         window.removeEventListener(type, this.options.handler, this.options.useCapture);
     }
 };
+
+resizilla$1.VERSION = version;
 
 export default resizilla$1;

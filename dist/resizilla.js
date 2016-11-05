@@ -1,8 +1,10 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global.resizilla = factory());
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (global.resizilla = factory());
 }(this, (function () { 'use strict';
+
+var version = '0.6.2';
 
 /**
  *  volve - Tiny, Performant Debounce and Throttle Functions,
@@ -259,6 +261,20 @@ var set = function set(object, property, value, receiver) {
   return value;
 };
 
+/*           _.-~-.
+           7''  Q..\
+        _7         (_
+      _7  _/    _q.  /
+    _7 . ___  /VVvv-'_                                            .
+   7/ / /~- \_\\      '-._     .-'                      /       //
+  ./ ( /-~-/  ||'=.__  '::. '-~'' {             ___   /  //     ./{
+ V   V-~-~|   ||   __''_   ':::.   ''~-~.___.-'' _/  // / {_   /  {  /
+  VV/-~-~-|  / \ .'__'. '.  '::  ____               _ _ _        ''.
+  / /~~~~||  VVV/ /  \ )  \     |  _ \ ___  ___(_)___(_) | | __ _   .::'
+ / (~-~-~\\.-' /    \'   \::::. | |_) / _ \/ __| |_  / | | |/ _` | :::'
+/..\    /..\__/      '     '::: |  _ <  __/\__ \ |/ /| | | | (_| | ::'
+vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| '' */
+
 /**
  * Check if value is an Array.
  * @param  {Array} type.
@@ -325,6 +341,8 @@ resizilla$1.destroy = function (type) {
         window.removeEventListener(type, this.options.handler, this.options.useCapture);
     }
 };
+
+resizilla$1.VERSION = version;
 
 return resizilla$1;
 

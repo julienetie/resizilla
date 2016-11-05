@@ -1,10 +1,18 @@
+/*           _.-~-.
+           7''  Q..\
+        _7         (_
+      _7  _/    _q.  /
+    _7 . ___  /VVvv-'_                                            .
+   7/ / /~- \_\\      '-._     .-'                      /       //
+  ./ ( /-~-/  ||'=.__  '::. '-~'' {             ___   /  //     ./{
+ V   V-~-~|   ||   __''_   ':::.   ''~-~.___.-'' _/  // / {_   /  {  /
+  VV/-~-~-|  / \ .'__'. '.  '::  ____               _ _ _        ''.
+  / /~~~~||  VVV/ /  \ )  \     |  _ \ ___  ___(_)___(_) | | __ _   .::'
+ / (~-~-~\\.-' /    \'   \::::. | |_) / _ \/ __| |_  / | | |/ _` | :::'
+/..\    /..\__/      '     '::: |  _ <  __/\__ \ |/ /| | | | (_| | ::'
+vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| '' */
+
 import { debounce } from 'volve';
-
-const request = requestAnimationFrame;
-const cancel = cancelAnimationFrame;
-const store = {};
-let start;
-
 
 /**
  * Check if value is an Array.
@@ -35,7 +43,7 @@ const isObject = (value) => {
  * @param  {Boolean} incept        Incept from start of delay or till the end.
  */
 export default function resizilla(optionsHandler, delay, incept) {
-    var options = {};
+    const options = {};
     resizilla.options = options;
 
     // Defaults
