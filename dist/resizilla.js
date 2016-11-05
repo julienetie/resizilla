@@ -1,39 +1,281 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global.resizilla = factory());
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global.resizilla = factory());
 }(this, (function () { 'use strict';
 
-// import { debounce } from 'volve';
-
-
-// const request = requestFrame('request');
-// const cancel = requestFrame('cancel');
-
-var self = window;
 /**
- * An Alternative to setTimeout using requestAnimationFrame
- * @param  {Function} handler
- * @param  {Number}   delay - In milisectonds 
- * @return {Number}   time lapse
+ *  volve - Tiny, Performant Debounce and Throttle Functions,
+ *     License:  MIT
+ *      Copyright Julien Etienne 2016 All Rights Reserved.
+ *        github:  https://github.com/julienetie/volve
+ *‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
  */
-// function requestTimeout(handler, delay) {
-//     start = Date.now();
 
-//     function increment(constant) {
-//         store.k = !store.k ? constant : null;
-//         return store.k += 1;
-//     }
+/**
+ * Date.now polyfill.
+ * {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Date/now}
+ */
+if (!Date.now) {
+    Date.now = function now() {
+        return new Date().getTime();
+    };
+}
 
-//     function loop() {
-//         store.delta = Date.now() - start;
-//         store.callHandler = store.delta >= delay ? handler.call() : request(loop);
-//     }
+/**
+ * Debounce a function call during repetiton.
+ * @param {Function}  callback - Callback function.
+ * @param {Number}    delay    - Delay in milliseconds.
+ * @param {Boolean}   lead  - Leading or trailing.
+ * @return {Function} - The debounce function. 
+ */
+function debounce(callback, delay, lead) {
+    var debounceRange = 0;
+    var currentTime;
+    var lastCall;
+    var setDelay;
+    var timeoutId;
 
-//     request(loop);
-//     return increment(0);
-// }
+    var call = function call(parameters) {
+        callback(parameters);
+    };
 
+    return function (parameters) {
+        if (lead) {
+            currentTime = Date.now();
+            if (currentTime > debounceRange) {
+                callback(parameters);
+            }
+            debounceRange = currentTime + delay;
+        } else {
+            /**
+             * setTimeout is only used with the trail option.
+             */
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(function () {
+                call(parameters);
+            }, delay);
+        }
+    };
+}
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
+
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var set = function set(object, property, value, receiver) {
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent !== null) {
+      set(parent, property, value, receiver);
+    }
+  } else if ("value" in desc && desc.writable) {
+    desc.value = value;
+  } else {
+    var setter = desc.set;
+
+    if (setter !== undefined) {
+      setter.call(receiver, value);
+    }
+  }
+
+  return value;
+};
+
+/**
+ * Check if value is an Array.
+ * @param  {Array} type.
+ * @return {Boolean}
+ */
+var isArray = Array.isArray || function (value) {
+    return toString.call(value) == '[object Array]';
+};
+
+/**
+ * Check if value is an object.
+ * @param  {Object} value.
+ * @return {Boolean}
+ */
+var isObject = function isObject(value) {
+    return value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && isArray(value) === false;
+};
 
 /**
  * resizilla function
@@ -50,9 +292,9 @@ function resizilla$1(optionsHandler, delay, incept) {
     // Defaults
     options.orientationChange = true;
     options.useCapture = true;
-    options.incept = incept;
+    options.incept = false;
 
-    if (optionsHandler.constructor === {}.constructor) {
+    if (isObject(optionsHandler)) {
         options.handler = optionsHandler.handler;
         options.delay = optionsHandler.delay;
         options.incept = optionsHandler.incept;
@@ -64,83 +306,10 @@ function resizilla$1(optionsHandler, delay, incept) {
         options.incept = typeof options.incept === 'undefined' ? options.incept : incept;
     }
 
-    // const debounce = (callback, delay, incept) => {
-    //         let timeout;
-
-    //         return function(parameters) {
-    //             function lastCall() {
-    //                 timeout = 0;
-    //                 if (!incept) {
-    //                     callback(parameters);
-    //                 }
-    //             };
-
-    //             this.instant = incept && !timeout;
-    //             cancel(timeout);
-    //             timeout = setAnimationFrame(lastCall, delay);
-
-    //             if (this.instant) {
-    //                 callback(parameters);
-    //             }
-    //         };
-    //     }
-    // function debounce(callback, delay) {
-    //     let lastCallTime;
-    //     let newDelayTime;
-    //     let call;
-    //     return function (parameters) {
-    //         const currentCallTime = Date.now();
-    //         const durationSinceLastCall = currentCallTime - lastCallTime;
-    //         cancelAnimationFrame(call);
-    //         if (!lastCallTime || durationSinceLastCall > delay) {
-    //             console.log('Called on delay')
-    //             callback(parameters);
-    //             lastCallTime = currentCallTime;
-    //         }else{
-    //             console.log('delayed')
-    //             call = setAnimationFrame(callback(parameters),delay)
-    //             lastCallTime = currentCallTime + delay;
-    //         }
-    //     };
-    // }
-
-    function debounce(callback, delay, trail) {
-        var debounceRange = 0;
-        var currentTime;
-        var lastCall;
-        var setDelay;
-        var timeoutId;
-        var frame;
-
-        var call = function call(parameters) {
-            callback(parameters);
-        };
-
-        return function (parameters) {
-            if (trail) {
-                console.log('trail');
-                /**
-                 * setTimeout is only used with the trail option.
-                 */
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(function () {
-                    call(parameters);
-                }, delay);
-            } else {
-                console.log('lead');
-                currentTime = Date.now();
-                if (currentTime > debounceRange) {
-                    callback(parameters);
-                }
-                debounceRange = currentTime + delay;
-            }
-        };
-    }
-
     window.addEventListener('resize', debounce(options.handler, options.delay, options.incept), options.useCapture);
 
     if (options.orientationChange) {
-        self.addEventListener('orientationchange', options.handler, options.useCapture);
+        window.addEventListener('orientationchange', options.handler, options.useCapture);
     }
 }
 

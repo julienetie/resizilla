@@ -9,9 +9,9 @@ const formatJSON = require('format-json');
 const version = process.argv[2];
 
 
-fs.writeFile('./dist/version.js', `export default '${version}';`, (error) => {
+fs.writeFile('./src/version.js', `export default '${version}';`, (error) => {
 	if (error) return console.log(error);
-	console.log(`\n\n./dist/version.js bumped to '${version}'`.green);
+	console.log(`\n\n./src/version.js bumped to '${version}'`.green);
 });
 
 
