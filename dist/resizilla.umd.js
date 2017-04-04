@@ -1,3 +1,24 @@
+/*           _.-~-.
+           7''  Q..\
+        _7         (_
+      _7  _/    _q.  /
+    _7 . ___  /VVvv-'_                                            .
+   7/ / /~- \_\\      '-._     .-'                      /       //
+  ./ ( /-~-/  ||'=.__  '::. '-~'' {             ___   /  //     ./{
+ V   V-~-~|   ||   __''_   ':::.   ''~-~.___.-'' _/  // / {_   /  {  /
+  VV/-~-~-|  / \ .'__'. '.  '::  ____               _ _ _        ''.
+  / /~~~~||  VVV/ /  \ )  \     |  _ \ ___  ___(_)___(_) | | __ _   .::'
+ / (~-~-~\\.-' /    \'   \::::. | |_) / _ \/ __| |_  / | | |/ _` | :::'
+/..\    /..\__/      '     '::: |  _ <  __/\__ \ |/ /| | | | (_| | ::'
+vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| ''
+*/
+/*
+ Version: 0.8.0
+ Description: A Better Window Resize
+ Author: Julien Etienne
+ Repository: https://github.com/julienetie/resizilla
+*/
+
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
@@ -110,92 +131,12 @@ var defaults = {
     orientationChange: true
 };
 
-/** 
- * debounce without setTimeout, works for IE10+ 
- */
-// const request = requestFrame('request');
-// const cancel = requestFrame('cancel');
-
-/** 
- * debounce without setTimeout, works for IE10+ 
- */
-// const requestTimeoutCurried = (callback) => {
-//     var callHandler;
-//     var delta;
-//     var k;
-//     var lastCall;
-//     var hasLastCall = false;
-//     var setDelay;
-//     const increment = (d) => k = !k ? d += 1 : 1;
-
-
-//     const loop = (start) => {
-//         delta = Date.now() - start;
-//         callHandler = delta >= setDelay ? lastCall() : request(loop);
-//     }
-
-
-//     return function(callback, delay) {
-//         const start = Date.now();
-
-//         if (!hasLastCall) {
-//             lastCall = callback;
-//             hasLastCall = true;
-//             setDelay = delay;
-//         }
-
-//         request(() => loop(start));
-//         return increment(0);
-//     }
-// }
-
-
-// const requestTimeout = requestTimeoutCurried();
-
-/** 
- * debounce without setTimeout, works for IE10+ 
- */
-// function handlerCallback(handler, delay, incept, windowObject) {
-//     handler.apply(windowObject, handler, delay, incept);
-// }
-
-
 var addWindowEvent = function addWindowEvent(handler, windowObject, useCapture) {
     windowObject.addEventListener('resize', handler, useCapture);
 };
 
-/** 
- * debounce without setTimeout, works for IE10+ 
- */
-// const debounceCurried = ({ handler, delay, incept}) => {
-// var timeout;
-// var instant;
-// const delayTime = delay;
-// return function debounceApplied() {
-
-//     console.log('debounceApplied')
-//     function lastCall() {
-//         timeout = 0;
-//         if (!incept) {
-//             handlerCallback(handler, delayTime, incept, windowObject);
-//         }
-//     };
-
-//     instant = incept && !timeout;
-//     cancel(timeout);
-
-//     timeout = requestTimeout(lastCall, delayTime);
-//     console.log(timeout);
-//     if (instant) {
-//         handlerCallback(handler, delayTime, incept, windowObject);
-//     }
-// };
-// }
-
-
 var resizillaCurried = function resizillaCurried(defaults, windowObject) {
     return function resizillaApplied(handler, delay, incept, useCapture, orientationChange) {
-        // console.log('resizillaApplied')
         var options = {
             handler: handler || defaults.handler,
             delay: delay || defaults.delay,
@@ -208,8 +149,6 @@ var resizillaCurried = function resizillaCurried(defaults, windowObject) {
         resizillaApplied.options = options;
 
         addWindowEvent(debounce(options.handler, options.delay, options.incept), windowObject, options.useCapture);
-
-        console.log('options.handler');
 
         if (options.orientationChange) {
             windowObject.addEventListener('orientationchange', options.handler, options.useCapture);
