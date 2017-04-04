@@ -3,7 +3,7 @@
 	"name": "resizilla",
 	"description": "A Better Window Resize",
 	"main": "dist/resizilla.umd.js",
-	"jsnext:main": "dist/resizilla.es.js",
+	"jsnext:main": "dist/resizilla.js",
 	"directories": {
 		"example": "example"
 	},
@@ -47,5 +47,5 @@
 		"set-animation-interval": "^0.0.2",
 		"volve": "^0.0.8"
 	},
-	"version": "0.8.1"
+	"version": "0.8.3"
 }

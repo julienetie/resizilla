@@ -31,15 +31,15 @@ ____
 - incept: If true the function call at the beginning of the detection period, if false the call will be at the end of the detection period (false by default)
 
 
-or 
+also
 
-**``` resizilla({ ```**
+**``` resizilla( ```**
 **```   handler: Function, ```**
 **```   delay: Milliseconds, ```**
 **```   incept: Boolean, ```**
-**```   orientationChange: Boolean, ```**
 **```   useCapture: Boolean ```**
-**``` }); ```**
+**```   orientationChange: Boolean, ```**
+**``` ); ```**
 
 - useCapture: Register the event handler for the capturing/ bubbling phase.
 - orientationChange: See below...
@@ -61,12 +61,13 @@ ____
  
 By default, resizilla calls the handler when the "orientationchange" event is fired. This can be disabled using 
 
-**``` resizilla({
+**``` resizilla(
     handler: () => { // do something },
     delay: 250,
     incept: true,
+    useCapture,
     orientationChange: false
-}); ```**
+); ```**
 ____
 #### Destroy: 
  
