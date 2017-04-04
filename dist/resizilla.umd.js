@@ -1,3 +1,9 @@
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (global.resizilla = factory());
+}(this, (function () { 'use strict';
+
 /**
  * request-frame-modern - Optimal requestAnimationFrame & cancelAnimationFrame polyfill for modern development
  * @version v2.0.0
@@ -11,7 +17,7 @@ var previousTime = 0;
  * Native clearTimeout function for IE-9 cancelAnimationFrame
  * @return {Function}
  */
-const clearTimeoutWithId = id => {
+var clearTimeoutWithId = function clearTimeoutWithId(id) {
     window.clearTimeout(id);
     id = null;
 };
@@ -22,21 +28,21 @@ const clearTimeoutWithId = id => {
  * @return {Function} setTimeout Function.
  */
 function setTimeoutWithTimestamp(callback) {
-    const immediateTime = Date.now();
-    let lapsedTime = Math.max(previousTime + 16, immediateTime);
+    var immediateTime = Date.now();
+    var lapsedTime = Math.max(previousTime + 16, immediateTime);
     return setTimeout(function () {
         callback(previousTime = lapsedTime);
     }, lapsedTime - immediateTime);
 }
 
 // Request and cancel functions for IE9+ & modern mobile browsers. 
-const requestFrameFn = window.requestAnimationFrame || setTimeoutWithTimestamp;
-const cancelFrameFn = window.cancelAnimationFrame || clearTimeoutWithId;
+var requestFrameFn = window.requestAnimationFrame || setTimeoutWithTimestamp;
+var cancelFrameFn = window.cancelAnimationFrame || clearTimeoutWithId;
 
 /**
  * Set the requestAnimationFrame & cancelAnimationFrame window functions.
  */
-const setNativeFn = (requestFn, cancelFn, winObj) => {
+var setNativeFn = function setNativeFn(requestFn, cancelFn, winObj) {
     winObj.requestAnimationFrame = requestFn;
     winObj.cancelAnimationFrame = cancelFn;
 };
@@ -73,11 +79,11 @@ function debounce(callback, delay, lead) {
     var setDelay;
     var timeoutId;
 
-    const call = parameters => {
+    var call = function call(parameters) {
         callback(parameters);
     };
 
-    return parameters => {
+    return function (parameters) {
         if (lead) {
             currentTime = Date.now();
             if (currentTime > debounceRange) {
@@ -96,8 +102,8 @@ function debounce(callback, delay, lead) {
     };
 }
 
-const defaults = {
-    handler: () => {},
+var defaults = {
+    handler: function handler() {},
     delay: 16,
     incept: false,
     useCapture: false,
@@ -154,7 +160,7 @@ const defaults = {
 // }
 
 
-const addWindowEvent = (handler, windowObject, useCapture) => {
+var addWindowEvent = function addWindowEvent(handler, windowObject, useCapture) {
     windowObject.addEventListener('resize', handler, useCapture);
 };
 
@@ -187,10 +193,10 @@ const addWindowEvent = (handler, windowObject, useCapture) => {
 // }
 
 
-const resizillaCurried = (defaults, windowObject) => {
+var resizillaCurried = function resizillaCurried(defaults, windowObject) {
     return function resizillaApplied(handler, delay, incept, useCapture, orientationChange) {
         // console.log('resizillaApplied')
-        const options = {
+        var options = {
             handler: handler || defaults.handler,
             delay: delay || defaults.delay,
             incept: incept || defaults.incept,
@@ -211,10 +217,14 @@ const resizillaCurried = (defaults, windowObject) => {
     };
 };
 
-const resizilla = resizillaCurried(defaults, window);
+var resizilla = resizillaCurried(defaults, window);
 
 resizilla.destroy = function (type) {
-    const { handler, useCapture, windowObject } = this.options;
+    var _options = this.options,
+        handler = _options.handler,
+        useCapture = _options.useCapture,
+        windowObject = _options.windowObject;
+
     if (!type || type === 'all') {
         windowObject.removeEventListener('resize', handler, useCapture);
         windowObject.removeEventListener('orientationchange', handler, useCapture);
@@ -223,4 +233,6 @@ resizilla.destroy = function (type) {
     }
 };
 
-export default resizilla;
+return resizilla;
+
+})));

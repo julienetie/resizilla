@@ -15,5 +15,5 @@ export default {
 		})
 	],
 	format: 'es',
-	dest: './dist/resizilla.es.js'
+	dest: './dist/resizilla.js'
 };

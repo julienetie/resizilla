@@ -282,7 +282,7 @@
         <div></div>
     </div>
     <span id='note'>Resize, change args</span>
-    <script src='../dist/resizilla.js'></script>
+    <script src='../dist/resizilla.umd.js'></script>
     <script>
     var get = 'getElementById',
         yellow = document[get]('yellow'),
@@ -291,8 +291,10 @@
         done = 1;
 
     function resizeYellow() {
-            var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-            var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+        console.log('resized yellow')
+            var width = window.innerWidth;
+            var height = window.innerHeight;
             yellow.style.width = width + 'px';
             yellow.style.height = height + 'px';
             setTimeout(function() {

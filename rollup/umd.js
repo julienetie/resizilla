@@ -15,5 +15,5 @@ export default {
 		})
 	],
 	format: 'umd',
-	dest: './dist/resizilla.js'
+	dest: './dist/resizilla.umd.js'
 };
