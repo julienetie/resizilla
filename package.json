@@ -1,12 +1,13 @@
 {
+	"author": "Julien Etienne",
 	"name": "resizilla",
 	"description": "A Better Window Resize",
-	"main": "resizilla.js",
+	"main": "dist/resizilla.umd.js",
+	"jsnext:main": "dist/resizilla.es.js",
 	"directories": {
 		"example": "example"
 	},
 	"scripts": {
-		"test": "gulp",
 		"bump": "node ./bump.js",
 		"build": "rollup -c ./rollup/umd.js && rollup -c ./rollup/es.js",
 		"watch": "rollup -c ./rollup/umd.js -w"
@@ -25,7 +26,6 @@
 		"resize events",
 		"mobile resize"
 	],
-	"author": "Julien Etienne",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/julienetie/resizilla/issues"
@@ -47,5 +47,5 @@
 		"set-animation-interval": "^0.0.2",
 		"volve": "^0.0.8"
 	},
-	"version": "0.8.0"
+	"version": "0.8.1"
 }

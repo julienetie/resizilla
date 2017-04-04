@@ -13,7 +13,7 @@
 vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| ''
 */
 /*
- Version: 0.8.0
+ Version: 0.8.1
  Description: A Better Window Resize
  Author: Julien Etienne
  Repository: https://github.com/julienetie/resizilla

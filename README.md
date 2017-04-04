@@ -1,25 +1,5 @@
 ![img](http://oi68.tinypic.com/33m0pbr.jpg)
 
-```php
-   *** Important API Changes***
-```
-   #### For:
-   - resizilla.js
-   - resizilla.es.js
-
-   version 0.7+ requires the Request-frame or an alternative requestAnimationFrame & cancelAnimationFrame polyfill. 
-
-	If you need to use both Request-frame and Resizilla check out [4d](https://github.com/envidia/4d) which includes both libraries and weighs under 2kB gzipped.
-
-- [4d](https://github.com/envidia/4d)
-- [requestFrame](https://github.com/julienetie/request-frame)
-
-   #### For:
-   - resizilla.polyfilljs
-   - resizilla.polyfill.es.js
-   
- These distributions include the Request-frame polyfill.
-
 
 ## resizilla
 ### A Better Window Resize
@@ -38,11 +18,9 @@ ____
 ```
 npm i resizilla --save
 ```
-##### via bower
 ```
-bower i resizilla
+yarn add resizilla
 ```
-##### via [src](https://github.com/julienetie/resizilla/tree/master/dist)
 ____
 #### Usage:
 
@@ -66,8 +44,6 @@ or
 - useCapture: Register the event handler for the capturing/ bubbling phase.
 - orientationChange: See below...
 
-
-_For general use, use a moderate delay e.g. `incept: 200`_
 
 ____
 #### Tested browsers:
@@ -108,7 +84,7 @@ The current example only needs to reveal the transition of the debounce to satis
 
 #### So no element resize support?
 
-Nope, and with good reason. Elements resize detection is a different paradigm, to detect changes that occur with elements checkout [getComputedStyle](https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle),  [transitionEnd](https://developer.mozilla.org/en-US/docs/Web/Events/transitionend) & [MutationObserver](https://developer.mozilla.org/en/docs/Web/API/MutationObserver).
+To detect changes that occur with elements checkout [getComputedStyle](https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle),  [transitionEnd](https://developer.mozilla.org/en-US/docs/Web/Events/transitionend) & [MutationObserver](https://developer.mozilla.org/en/docs/Web/API/MutationObserver).
 
 _(Original ASCII art by Mozilla)_
 
