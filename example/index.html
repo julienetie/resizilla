@@ -291,8 +291,6 @@
         done = 1;
 
     function resizeYellow() {
-
-        console.log('resized yellow')
             var width = window.innerWidth;
             var height = window.innerHeight;
             yellow.style.width = width + 'px';
@@ -304,7 +302,21 @@
             note.style.display = done ? null : 'none';
             done = 0;
         }
-    resizilla(resizeYellow, 400);
+        
+    var rz = resizilla(resizeYellow, 400);
+   
+    // //Destroys resizilla in 10 seconds 
+    // setTimeout(()=>{
+    //     rz.destroy();
+    //     console.log('destroyed')
+    // },8000);
+
+
+    // //Bring back alive
+    // setTimeout(()=>{
+    //     resizilla(resizeYellow, 400);
+    //     console.log('Welcome back')
+    // },16000);
     </script>
 </body>
 
