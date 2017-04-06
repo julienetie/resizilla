@@ -48,6 +48,12 @@ var setNativeFn = function setNativeFn(requestFn, cancelFn, winObj) {
 };
 
 /**
+ * Default function to set the timing.
+ * @param  {String} type - request | cancel | native | ''.
+ * @return {Function} Timing function.
+ */
+
+/**
  *  volve - Tiny, Performant Debounce and Throttle Functions,
  *     License:  MIT
  *      Copyright Julien Etienne 2016 All Rights Reserved.
@@ -64,6 +70,41 @@ if (!Date.now) {
         return new Date().getTime();
     };
 }
+
+/**
+ * Throttle a function call during repetiton.
+ * @param {Function} - Callback function.
+ * @param {Number}   - Limit in milliseconds.
+ * @return {Function} - The throttle function. 
+ */
+
+var objectAssignPolyfill = function objectAssignPolyfill() {
+    if (typeof Object.assign != 'function') {
+        (function () {
+            Object.assign = function (target) {
+                'use strict';
+                // We must check against these specific cases.
+
+                if (target === undefined || target === null) {
+                    throw new TypeError('Cannot convert undefined or null to object');
+                }
+
+                var output = Object(target);
+                for (var index = 1; index < arguments.length; index++) {
+                    var source = arguments[index];
+                    if (source !== undefined && source !== null) {
+                        for (var nextKey in source) {
+                            if (source.hasOwnProperty(nextKey)) {
+                                output[nextKey] = source[nextKey];
+                            }
+                        }
+                    }
+                }
+                return output;
+            };
+        })();
+    }
+};
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -302,8 +343,11 @@ var toConsumableArray = function (arr) {
   }
 };
 
+// Add the Object.assign polyfill.
+objectAssignPolyfill();
+
 // Obtains the window or global according to the environment.
-var windowGlobal = (typeof self === 'undefined' ? 'undefined' : _typeof(self)) === 'object' && self.self === self && self || (typeof global === 'undefined' ? 'undefined' : _typeof(global)) === 'object' && global.global === global && global || window;
+var windowGlobal = typeof window !== 'undefined' ? window : (typeof self === 'undefined' ? 'undefined' : _typeof(self)) === 'object' && self.self === self && self || (typeof global === 'undefined' ? 'undefined' : _typeof(global)) === 'object' && global.global === global && global;
 
 // A list of option names to make naming and renaming simple.
 var optionNames = 'handler,delay,incept,useCapture,orientationchange'.split(',');

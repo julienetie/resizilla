@@ -1,6 +1,9 @@
 import requestFrame from 'request-frame-modern';
 import { debounce } from 'volve';
+import objectAssignPolyfill from '../libs/object-assign-polyfill';
 
+// Add the Object.assign polyfill.
+objectAssignPolyfill();
 
 // Obtains the window or global according to the environment.
 const windowGlobal = typeof window !== 'undefined' ? window : (typeof self === 'object' && self.self === self && self) ||

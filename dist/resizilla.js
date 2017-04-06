@@ -42,6 +42,12 @@ const setNativeFn = (requestFn, cancelFn, winObj) => {
 };
 
 /**
+ * Default function to set the timing.
+ * @param  {String} type - request | cancel | native | ''.
+ * @return {Function} Timing function.
+ */
+
+/**
  *  volve - Tiny, Performant Debounce and Throttle Functions,
  *     License:  MIT
  *      Copyright Julien Etienne 2016 All Rights Reserved.
@@ -59,8 +65,46 @@ if (!Date.now) {
     };
 }
 
+/**
+ * Throttle a function call during repetiton.
+ * @param {Function} - Callback function.
+ * @param {Number}   - Limit in milliseconds.
+ * @return {Function} - The throttle function. 
+ */
+
+const objectAssignPolyfill = () => {
+    if (typeof Object.assign != 'function') {
+        (function () {
+            Object.assign = function (target) {
+                'use strict';
+                // We must check against these specific cases.
+
+                if (target === undefined || target === null) {
+                    throw new TypeError('Cannot convert undefined or null to object');
+                }
+
+                var output = Object(target);
+                for (var index = 1; index < arguments.length; index++) {
+                    var source = arguments[index];
+                    if (source !== undefined && source !== null) {
+                        for (var nextKey in source) {
+                            if (source.hasOwnProperty(nextKey)) {
+                                output[nextKey] = source[nextKey];
+                            }
+                        }
+                    }
+                }
+                return output;
+            };
+        })();
+    }
+};
+
+// Add the Object.assign polyfill.
+objectAssignPolyfill();
+
 // Obtains the window or global according to the environment.
-const windowGlobal = typeof self === 'object' && self.self === self && self || typeof global === 'object' && global.global === global && global || window;
+const windowGlobal = typeof window !== 'undefined' ? window : typeof self === 'object' && self.self === self && self || typeof global === 'object' && global.global === global && global;
 
 // A list of option names to make naming and renaming simple.
 const optionNames = 'handler,delay,incept,useCapture,orientationchange'.split(',');
