@@ -23,7 +23,7 @@ yarn add resizilla
 ____
 #### Usage:
 
-**```resizilla(handler, delay, incept);```** 
+```resizilla(handler, delay, incept);```
  
 - handler: Function to execute on resize
 - delay: Delay of the function call in ms on resize
@@ -32,13 +32,15 @@ ____
 
 also
 
-**``` resizilla( ```**
-**```   handler: Function, ```**
-**```   delay: Milliseconds, ```**
-**```   incept: Boolean, ```**
-**```   useCapture: Boolean ```**
-**```   orientationChange: Boolean, ```**
-**``` ); ```**
+```javascript
+resizilla(
+   handler,           -  Function
+   delay,             -  Number (Milliseconds)
+   incept,            -  Boolean
+   useCapture,        -  Boolean
+   orientationChange  -  Boolean
+);
+```
 
 - useCapture: Register the event handler for the capturing/ bubbling phase.
 - orientationChange: See below...
@@ -70,12 +72,22 @@ By default, resizilla calls the handler when the "orientationchange" event is fi
 ____
 #### Destroy: 
  
-Remove the event listener by using the below:
+Remove the internal event listeners by using the below:
 
-**``` resizilla.destroy(event); ```**
+```javascript 
+const {destroy} = resizilla(...);
 
-- Leave empty or use "all" to destroy both events,
-- Pass "resize" or "orientationchange" to kill those specific events.
+// Destroy all.
+destroy();
+
+// Destroy resize
+destroy('resize');
+
+// Destroy orientationchange
+destroy('orientationchange');
+```
+
+And reuse resizilla at any point in time.
 
 ____
 #### The example:
