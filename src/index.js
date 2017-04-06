@@ -31,9 +31,10 @@ const convertPairsToLiterals = (value, i) => ({
  * Returns the same handler for removeEventListeners.
  * @return {Function}
  */
-const addWindowEvent = (handler, windowObject, useCapture) => {
-    windowObject.addEventListener('resize', handler, useCapture);
-    return handler;
+const addWindowEvent = (handler, delay, incept, windowObject, useCapture) => {
+    const debounced = debounce(handler, delay, incept);
+    windowObject.addEventListener('resize', debounced, useCapture);
+    return debounced;
 }
 
 
@@ -90,7 +91,7 @@ const resizillaPartial = (defaults, windowObject) => {
         } = mergedOptions;
 
         // A direct reference to the added handler.
-        const directHandler = addWindowEvent(handler, windowObject, useCapture);
+        const directHandler = addWindowEvent(handler, delay, incept, windowObject, useCapture);
 
         // Adds orientationchange event if required.
         if (orientationChange) {

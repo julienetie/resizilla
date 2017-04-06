@@ -25,7 +25,7 @@ const triggerResizeEvent = (element) => {
 function triggerResizilla(n, done) {
     triggerResizeEvent(window);
 
-    expect(trigger).to.equal(n);
+        expect(trigger).to.equal(n);
     if (n >= 3) {
         done();
     }
@@ -68,17 +68,19 @@ describe('resizilla', () => {
     it('Should attach an eventistener to the window object', (done) => {
         resizillaReturnObject = resizilla(() => {
             trigger = true;
-        }, 100, false);
-
-        triggerResizeEvent(window);
-
-        expect(trigger).to.be.true;
-        done();
+        }, 16, false);
+        setTimeout(() => {
+            triggerResizeEvent(window);
+        }, 100);
+        setTimeout(() => {
+            expect(trigger).to.be.true;
+            done();
+        }, 200);
     });
 
 
     it('Should destroy the previous attached eventistener', (done) => {
-        const {destroy} = resizillaReturnObject;
+        const { destroy } = resizillaReturnObject;
 
         destroy();
 
@@ -90,14 +92,12 @@ describe('resizilla', () => {
     });
 
     it('Should trigger on multiple resize events', (done) => {
+        trigger = 1;
         var once = true;
-        var i = 0;
+        var i = 1;
         resizilla(() => {
             i++
-            if(trigger !== false || once){
-            	trigger = i;
-            	once = false;
-        	}
+            trigger = i;
             console.log('trigger', trigger);
         }, 16, false);
 
@@ -105,7 +105,7 @@ describe('resizilla', () => {
          * Will trigger resizilla three times.
          * each time setting trigger to an incrementing number.
          */
-        fireEventsPerInterval(3, 300, triggerResizilla, done);
+        fireEventsPerInterval(3, 100, triggerResizilla, done);
     });
 
 });

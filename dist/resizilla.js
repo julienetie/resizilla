@@ -1,24 +1,3 @@
-/*           _.-~-.
-           7''  Q..\
-        _7         (_
-      _7  _/    _q.  /
-    _7 . ___  /VVvv-'_                                            .
-   7/ / /~- \_\\      '-._     .-'                      /       //
-  ./ ( /-~-/  ||'=.__  '::. '-~'' {             ___   /  //     ./{
- V   V-~-~|   ||   __''_   ':::.   ''~-~.___.-'' _/  // / {_   /  {  /
-  VV/-~-~-|  / \ .'__'. '.  '::  ____               _ _ _        ''.
-  / /~~~~||  VVV/ /  \ )  \     |  _ \ ___  ___(_)___(_) | | __ _   .::'
- / (~-~-~\\.-' /    \'   \::::. | |_) / _ \/ __| |_  / | | |/ _` | :::'
-/..\    /..\__/      '     '::: |  _ <  __/\__ \ |/ /| | | | (_| | ::'
-vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| ''
-*/
-/*
- Version: 0.9.0
- Description: A Better Window Resize
- Author: Julien Etienne
- Repository: https://github.com/julienetie/resizilla
-*/
-
 /**
  * request-frame-modern - Optimal requestAnimationFrame & cancelAnimationFrame polyfill for modern development
  * @version v2.0.3
@@ -63,12 +42,6 @@ const setNativeFn = (requestFn, cancelFn, winObj) => {
 };
 
 /**
- * Default function to set the timing.
- * @param  {String} type - request | cancel | native | ''.
- * @return {Function} Timing function.
- */
-
-/**
  *  volve - Tiny, Performant Debounce and Throttle Functions,
  *     License:  MIT
  *      Copyright Julien Etienne 2016 All Rights Reserved.
@@ -87,11 +60,41 @@ if (!Date.now) {
 }
 
 /**
- * Throttle a function call during repetiton.
- * @param {Function} - Callback function.
- * @param {Number}   - Limit in milliseconds.
- * @return {Function} - The throttle function. 
+ * Debounce a function call during repetiton.
+ * @param {Function}  callback - Callback function.
+ * @param {Number}    delay    - Delay in milliseconds.
+ * @param {Boolean}   lead  - Leading or trailing.
+ * @return {Function} - The debounce function. 
  */
+function debounce(callback, delay, lead) {
+    var debounceRange = 0;
+    var currentTime;
+    var lastCall;
+    var setDelay;
+    var timeoutId;
+
+    const call = parameters => {
+        callback(parameters);
+    };
+
+    return parameters => {
+        if (lead) {
+            currentTime = Date.now();
+            if (currentTime > debounceRange) {
+                callback(parameters);
+            }
+            debounceRange = currentTime + delay;
+        } else {
+            /**
+             * setTimeout is only used with the trail option.
+             */
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(function () {
+                call(parameters);
+            }, delay);
+        }
+    };
+}
 
 const objectAssignPolyfill = () => {
     if (typeof Object.assign != 'function') {
@@ -145,9 +148,10 @@ const convertPairsToLiterals = (value, i) => ({
  * Returns the same handler for removeEventListeners.
  * @return {Function}
  */
-const addWindowEvent = (handler, windowObject, useCapture) => {
-    windowObject.addEventListener('resize', handler, useCapture);
-    return handler;
+const addWindowEvent = (handler, delay, incept, windowObject, useCapture) => {
+    const debounced = debounce(handler, delay, incept);
+    windowObject.addEventListener('resize', debounced, useCapture);
+    return debounced;
 };
 
 const destroyPartial = (directHandler, useCapture, windowObject) => {
@@ -200,7 +204,7 @@ const resizillaPartial = (defaults, windowObject) => {
         } = mergedOptions;
 
         // A direct reference to the added handler.
-        const directHandler = addWindowEvent(handler, windowObject, useCapture);
+        const directHandler = addWindowEvent(handler, delay, incept, windowObject, useCapture);
 
         // Adds orientationchange event if required.
         if (orientationChange) {
