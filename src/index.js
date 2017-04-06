@@ -3,8 +3,8 @@ import { debounce } from 'volve';
 
 
 // Obtains the window or global according to the environment.
-const windowGlobal = (typeof self === 'object' && self.self === self && self) ||
-    (typeof global === 'object' && global.global === global && global) || window;
+const windowGlobal = typeof window !== 'undefined' ? window : (typeof self === 'object' && self.self === self && self) ||
+    (typeof global === 'object' && global.global === global && global);
 
 
 // A list of option names to make naming and renaming simple.

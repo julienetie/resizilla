@@ -1,27 +1,6 @@
-/*           _.-~-.
-           7''  Q..\
-        _7         (_
-      _7  _/    _q.  /
-    _7 . ___  /VVvv-'_                                            .
-   7/ / /~- \_\\      '-._     .-'                      /       //
-  ./ ( /-~-/  ||'=.__  '::. '-~'' {             ___   /  //     ./{
- V   V-~-~|   ||   __''_   ':::.   ''~-~.___.-'' _/  // / {_   /  {  /
-  VV/-~-~-|  / \ .'__'. '.  '::  ____               _ _ _        ''.
-  / /~~~~||  VVV/ /  \ )  \     |  _ \ ___  ___(_)___(_) | | __ _   .::'
- / (~-~-~\\.-' /    \'   \::::. | |_) / _ \/ __| |_  / | | |/ _` | :::'
-/..\    /..\__/      '     '::: |  _ <  __/\__ \ |/ /| | | | (_| | ::'
-vVVv    vVVv                 ': |_| \_\___||___/_/___|_|_|_|\__,_| ''
-*/
-/*
- Version: 0.8.3
- Description: A Better Window Resize
- Author: Julien Etienne
- Repository: https://github.com/julienetie/resizilla
-*/
-
 /**
  * request-frame-modern - Optimal requestAnimationFrame & cancelAnimationFrame polyfill for modern development
- * @version v2.0.0
+ * @version v2.0.3
  * @license MIT
  * Copyright Julien Etienne 2015 All Rights Reserved.
  */
@@ -80,86 +59,97 @@ if (!Date.now) {
     };
 }
 
-/**
- * Debounce a function call during repetiton.
- * @param {Function}  callback - Callback function.
- * @param {Number}    delay    - Delay in milliseconds.
- * @param {Boolean}   lead  - Leading or trailing.
- * @return {Function} - The debounce function. 
+// Obtains the window or global according to the environment.
+const windowGlobal = typeof self === 'object' && self.self === self && self || typeof global === 'object' && global.global === global && global || window;
+
+// A list of option names to make naming and renaming simple.
+const optionNames = 'handler,delay,incept,useCapture,orientationchange'.split(',');
+
+// Default options that correspond with the optionNames.
+const defaults = [() => {}, 16, false, false, true];
+
+/** 
+ * Each option name is paired with the option value
+ * @return {Object}
  */
-function debounce(callback, delay, lead) {
-    var debounceRange = 0;
-    var currentTime;
-    var lastCall;
-    var setDelay;
-    var timeoutId;
+const convertPairsToLiterals = (value, i) => ({
+    [optionNames[i]]: value });
 
-    const call = parameters => {
-        callback(parameters);
-    };
-
-    return parameters => {
-        if (lead) {
-            currentTime = Date.now();
-            if (currentTime > debounceRange) {
-                callback(parameters);
-            }
-            debounceRange = currentTime + delay;
-        } else {
-            /**
-             * setTimeout is only used with the trail option.
-             */
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(function () {
-                call(parameters);
-            }, delay);
-        }
-    };
-}
-
-const defaults = {
-    handler: () => {},
-    delay: 16,
-    incept: false,
-    useCapture: false,
-    orientationChange: true
-};
-
+/** 
+ * Adds the window event with the provided options.
+ * Returns the same handler for removeEventListeners.
+ * @return {Function}
+ */
 const addWindowEvent = (handler, windowObject, useCapture) => {
     windowObject.addEventListener('resize', handler, useCapture);
+    return handler;
 };
 
-const resizillaCurried = (defaults, windowObject) => {
-    return function resizillaApplied(handler, delay, incept, useCapture, orientationChange) {
-        const options = {
-            handler: handler || defaults.handler,
-            delay: delay || defaults.delay,
-            incept: incept || defaults.incept,
-            useCapture: useCapture || defaults.useCapture,
-            orientationChange: orientationChange || defaults.orientationChange,
-            windowObject: windowObject
-        };
-
-        resizillaApplied.options = options;
-
-        addWindowEvent(debounce(options.handler, options.delay, options.incept), windowObject, options.useCapture);
-
-        if (options.orientationChange) {
-            windowObject.addEventListener('orientationchange', options.handler, options.useCapture);
+const destroyPartial = (directHandler, useCapture, windowObject) => {
+    const destroyAPI = type => {
+        if (!type || type === 'all') {
+            // Remove both event listeners.
+            windowObject.removeEventListener('resize', directHandler, useCapture);
+            windowObject.removeEventListener('orientationchange', directHandler, useCapture);
+        } else {
+            // Remove specific event listener.
+            windowObject.removeEventListener(type, directHandler, useCapture);
         }
+    };
+    return destroyAPI;
+};
+
+/** 
+ * Partially apply variables as defaults
+ * @param {Array} defaults - Array of consecutive defaults.
+ * @param {object} windowObject -  The window | global object.
+ */
+const resizillaPartial = (defaults, windowObject) => {
+
+    /** 
+     * The API
+     * @param {Function} handler - The callback to execute on resize
+     * @param {Number} delay - Debounce delay in milliseconds
+     * @param {Boolean} incept - Debounce style
+     * @param {Boolean} useCapture - Bubbling/ capture options for events
+     * @param {Boolean} orientationChange - respond on orientation change
+     */
+    return function resizillaFinal(...APIParameters) {
+
+        // The unchosen excess defaults.
+        const excessDefaults = defaults.slice(APIParameters.length, defaults.length);
+
+        // Concatenate the API options with the excess defaults.
+        const optionValues = [...APIParameters, ...excessDefaults];
+
+        // Final options as an object.
+        const mergedOptions = Object.assign(...optionValues.map(convertPairsToLiterals));
+
+        // Destructured options.
+        const {
+            handler,
+            delay,
+            incept,
+            useCapture,
+            orientationChange
+        } = mergedOptions;
+
+        // A direct reference to the added handler.
+        const directHandler = addWindowEvent(handler, windowObject, useCapture);
+
+        // Adds orientationchange event if required.
+        if (orientationChange) {
+            windowObject.addEventListener('orientationchange', directHandler, useCapture);
+        }
+
+        // Returns an destroyAPI method to remove event listeners.
+        return {
+            destroy: destroyPartial(directHandler, useCapture, windowObject)
+        };
     };
 };
 
-const resizilla = resizillaCurried(defaults, window);
-
-resizilla.destroy = function (type) {
-    const { handler, useCapture, windowObject } = this.options;
-    if (!type || type === 'all') {
-        windowObject.removeEventListener('resize', handler, useCapture);
-        windowObject.removeEventListener('orientationchange', handler, useCapture);
-    } else {
-        windowObject.removeEventListener(type, handler, useCapture);
-    }
-};
+// Creates the Resizilla function.
+const resizilla = resizillaPartial(defaults, windowGlobal);
 
 export default resizilla;

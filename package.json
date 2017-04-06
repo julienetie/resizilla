@@ -8,9 +8,9 @@
 		"example": "example"
 	},
 	"scripts": {
-		"test": "mocha --compilers js:babel-register --recursive",
 		"bump": "node ./bump.js",
 		"build": "rollup -c ./rollup/umd.js && rollup -c ./rollup/es.js",
+		"test": "mocha --compilers js:babel-register --recursive",
 		"watch": "rollup -c ./rollup/umd.js -w"
 	},
 	"repository": {
@@ -45,9 +45,11 @@
 		"rollup": "^0.36.3",
 		"rollup-plugin-babel": "^2.6.1",
 		"rollup-plugin-node-resolve": "^2.0.0",
-		"rollup-watch": "^2.5.0"
+		"rollup-watch": "^2.5.0",
+		"run-once": "^1.0.0"
 	},
 	"dependencies": {
+		"request-frame-modern": "^2.0.3",
 		"set-animation-frame": "^0.1.1",
 		"set-animation-interval": "^0.0.2",
 		"volve": "^0.0.8"

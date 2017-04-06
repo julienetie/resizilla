@@ -6,7 +6,7 @@
 
 /**
  * request-frame-modern - Optimal requestAnimationFrame & cancelAnimationFrame polyfill for modern development
- * @version v2.0.0
+ * @version v2.0.3
  * @license MIT
  * Copyright Julien Etienne 2015 All Rights Reserved.
  */
